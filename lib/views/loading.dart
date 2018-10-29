@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
-import '../data/firebase.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'home.dart';
-
 
 class LoadingPage extends StatefulWidget {
   LoadingPage({Key key, this.bgColor}) : super(key: key);
@@ -12,11 +11,10 @@ class LoadingPage extends StatefulWidget {
 
   @override
   _LoadingPageState createState() => new _LoadingPageState();
-
 }
 
-class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStateMixin {
-
+class _LoadingPageState extends State<LoadingPage>
+    with SingleTickerProviderStateMixin {
   bool _loadingInProgress;
 
   Animation<double> _angleAnimation;
@@ -29,7 +27,7 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
     _loadingInProgress = true;
 
     _controller = new AnimationController(
-      duration: const Duration(milliseconds: 2000), vsync: this);
+        duration: const Duration(milliseconds: 2000), vsync: this);
     _angleAnimation = new Tween(begin: 0.0, end: 360.0).animate(_controller)
       ..addListener(() {
         setState(() {
@@ -78,14 +76,12 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
       return new Stack(
         fit: StackFit.expand,
         children: <Widget>[
-          Container(
-            decoration: BoxDecoration(color: const Color(0xFFFF0000))
-          ),
+          Container(decoration: BoxDecoration(color: const Color(0xFFFF0000))),
           _buildAnimation()
-        ] ,
+        ],
       );
     } else {
-      return new Center (
+      return new Center(
         child: new Text('Data loaded'),
       );
     }
@@ -98,16 +94,16 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
       height: circleWidth * 2.0,
       child: new Column(
         children: <Widget>[
-          new Row (
-              children: <Widget>[
-                _buildCircle(circleWidth,Colors.blue),
-                _buildCircle(circleWidth,Colors.red),
-              ],
-          ),
-          new Row (
+          new Row(
             children: <Widget>[
-              _buildCircle(circleWidth,Colors.yellow),
-              _buildCircle(circleWidth,Colors.green),
+              _buildCircle(circleWidth, Colors.blue),
+              _buildCircle(circleWidth, Colors.red),
+            ],
+          ),
+          new Row(
+            children: <Widget>[
+              _buildCircle(circleWidth, Colors.yellow),
+              _buildCircle(circleWidth, Colors.green),
             ],
           ),
         ],
@@ -135,16 +131,19 @@ class _LoadingPageState extends State<LoadingPage> with SingleTickerProviderStat
   }
 
   Future _loadData() async {
-    final response = await new Firebase().call();
+    final data = {"test": "fabulous"};
+    final doc = Firestore.instance.collection("test").document();
+    await doc.setData(data);
+    final reponse = await doc.get();
+    assert(reponse.data["test"] == data["test"]);
+    await doc.delete();
     _dataLoaded('test');
   }
 
   void _dataLoaded(response) {
-    Navigator.of(context).pushReplacement(
-      new MaterialPageRoute(
-        settings: const RouteSettings(name: '/home'),
-        builder: (context) => new HomePage(response: response),
-      )
-    );
+    Navigator.of(context).pushReplacement(new MaterialPageRoute(
+      settings: const RouteSettings(name: '/home'),
+      builder: (context) => new HomePage(response: response),
+    ));
   }
 }

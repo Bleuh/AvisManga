@@ -15,7 +15,7 @@ class HomePage extends StatefulWidget {
   // always marked "final".
 
   final String title = 'homepage';
-  Map<String, dynamic> response;
+  String response;
 
   @override
   _HomePageState createState() => new _HomePageState();
