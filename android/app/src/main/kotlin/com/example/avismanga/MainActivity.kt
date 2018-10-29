@@ -1,4 +1,4 @@
-package com.example.avismanga
+package io.twob.avismanga
 
 import android.os.Bundle
 
