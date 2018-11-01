@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'views/home.dart';
 import 'views/loading.dart';
 
 void main() => runApp(new MyApp());
@@ -21,23 +20,23 @@ class MyApp extends StatelessWidget {
         // counter didn't reset back to zero; the application is not restarted.
         primarySwatch:themeColor,
       ),
-      home: new LoadingPage(bgColor: const Color(0xFFFF0000)),
+      home: new LoadingPage(),
     );
   }
 }
 
 const MaterialColor themeColor = const MaterialColor(
-  0xFFFF0000,
+  0xFF283593,
   const <int, Color>{
-    50 : const Color(0xFFFF0000),
-    100: const Color(0xFFFF0000),
-    200: const Color(0xFFFF0000),
-    300: const Color(0xFFFF0000),
-    400: const Color(0xFFFF0000),
-    500: const Color(0xFFFF0000),
-    600: const Color(0xFFFF0000),
-    700: const Color(0xFFFF0000),
-    800: const Color(0xFFFF0000),
-    900: const Color(0xFFFF0000),
+    50 : const Color(0xFF283593),
+    100: const Color(0xFF283593),
+    200: const Color(0xFF283593),
+    300: const Color(0xFF283593),
+    400: const Color(0xFF283593),
+    500: const Color(0xFF283593),
+    600: const Color(0xFF283593),
+    700: const Color(0xFF283593),
+    800: const Color(0xFF283593),
+    900: const Color(0xFF283593),
   }
 );

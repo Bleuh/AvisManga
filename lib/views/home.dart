@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key, this.response = null}) : super(key: key);
+  HomePage({Key key, this.data}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -15,7 +14,7 @@ class HomePage extends StatefulWidget {
   // always marked "final".
 
   final String title = 'homepage';
-  String response;
+  Map<String, dynamic> data;
 
   @override
   _HomePageState createState() => new _HomePageState();
