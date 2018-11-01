@@ -10,9 +10,7 @@ import 'package:flutter/services.dart';
 import 'home.dart';
 
 class LoadingPage extends StatefulWidget {
-  LoadingPage({Key key, this.bgColor}) : super(key: key);
-
-  final Color bgColor;
+  LoadingPage({Key key}) : super(key: key);
 
   @override
   _LoadingPageState createState() => new _LoadingPageState();
@@ -72,24 +70,23 @@ class _LoadingPageState extends State<LoadingPage>
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
       body: _buildBody(),
     );
   }
 
   Widget _buildBody() {
-    if (_loadingInProgress) {
-      return new Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          Container(decoration: BoxDecoration(color: const Color(0xFFFF0000))),
-          _buildAnimation()
-        ],
-      );
-    } else {
-      return new Center(
-        child: new Text('Data loaded'),
-      );
-    }
+    return Column(
+      children: <Widget>[
+        Container(
+          height: 150.0,
+          padding: EdgeInsets.only(bottom: 20.0),
+          child: Center(child: _buildAnimation()),
+        ),
+        Text('Loading', style: TextStyle(color: Colors.white))
+      ],
+      mainAxisAlignment: MainAxisAlignment.center,
+    );
   }
 
   Widget _buildAnimation() {
@@ -138,27 +135,30 @@ class _LoadingPageState extends State<LoadingPage>
   Future _loadData() async {
     final data = {"test": "fabulous"};
     final doc = Firestore.instance.collection("test").document();
-    await doc.setData(data);
-    final reponse = await doc.get();
-    assert(reponse.data["test"] == data["test"]);
-    await doc.delete();
-
-    // TODO: only for testing, Hardcoded URI
-    _dataLoaded({
-      'test': new MangaMetadata(
-          title: "Test Manga",
-          description: "a manga for testing. this is a very long description and i don't what to say but this is for testing purpose. bajlkjadlkjasjdksldjlakjsdjldakjkjl",
-          mainImage: "https://cdn.japscan.cc/lel/Radiant/1/05.jpg",
-          nbChap: 10,
-          rating: 3.5,
-          tags: ["Comedy", "Action", "Slice of life"]),
+    var response = await doc.get();
+    if (response.data == null || response.data["test"] != data["test"]) {
+      await doc.setData(data);
+    }
+    response = await doc.get();
+    new Timer(new Duration(seconds: 2), () {
+    // TODO: only for testing
+      _dataLoaded(data: {
+        'test': new MangaMetadata(
+            title: "Test Manga",
+            description:
+                "a manga for testing. this is a very long description and i don't what to say but this is for testing purpose. bajlkjadlkjasjdksldjlakjsdjldakjkjl",
+            mainImage: "https://cdn.japscan.cc/lel/Radiant/1/05.jpg",
+            nbChap: 10,
+            rating: 3.5,
+            tags: ["Comedy", "Action", "Slice of life"]),
+      });
     });
   }
 
-  void _dataLoaded(response) {
+  void _dataLoaded({data}) {
     Navigator.of(context).pushReplacement(new MaterialPageRoute(
       settings: const RouteSettings(name: '/home'),
-      builder: (context) => new HomePage(response: response),
+      builder: (context) => new HomePage(data: data),
     ));
   }
 }

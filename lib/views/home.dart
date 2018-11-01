@@ -4,7 +4,7 @@ import 'package:avis_manga/views/widget/manga_card.dart';
 import 'package:avis_manga/data/manga.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key, this.response}) : super(key: key);
+  HomePage({Key key, this.data}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -16,7 +16,7 @@ class HomePage extends StatefulWidget {
   // always marked "final".
 
   final String title = 'homepage';
-  Map<String, dynamic> response;
+  final Map<String, dynamic> data;
 
   @override
   _HomePageState createState() => new _HomePageState();
@@ -25,7 +25,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    var widgets = this.widget.response.values.map((meta) {
+    var widgets = this.widget.data.values.map((meta) {
       return MangaCard(meta);
     }).toList();
     return new Scaffold(
