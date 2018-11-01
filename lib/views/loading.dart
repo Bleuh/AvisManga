@@ -1,7 +1,12 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
+import 'dart:typed_data';
 import 'dart:math';
+
+import 'package:avis_manga/data/manga.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import 'home.dart';
 
 class LoadingPage extends StatefulWidget {
@@ -137,7 +142,17 @@ class _LoadingPageState extends State<LoadingPage>
     final reponse = await doc.get();
     assert(reponse.data["test"] == data["test"]);
     await doc.delete();
-    _dataLoaded('test');
+
+    // TODO: only for testing, Hardcoded URI
+    _dataLoaded({
+      'test': new MangaMetadata(
+          title: "Test Manga",
+          description: "a manga for testing. this is a very long description and i don't what to say but this is for testing purpose. bajlkjadlkjasjdksldjlakjsdjldakjkjl",
+          mainImage: "https://cdn.japscan.cc/lel/Radiant/1/05.jpg",
+          nbChap: 10,
+          rating: 3.5,
+          tags: ["Comedy", "Action", "Slice of life"]),
+    });
   }
 
   void _dataLoaded(response) {
