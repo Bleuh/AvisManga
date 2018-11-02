@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:avis_manga/views/partials/manga_card.dart';
-import 'package:avis_manga/data/manga.dart';
+import 'package:avis_manga/models/manga.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.data}) : super(key: key);
