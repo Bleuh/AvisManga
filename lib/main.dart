@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'loading.dart';
+import 'views/loading.dart';
 
 void main() => runApp(new MyApp());
 
