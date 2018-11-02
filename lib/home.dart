@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:avis_manga/views/widget/manga_card.dart';
+import 'package:avis_manga/views/manga_card.dart';
 import 'package:avis_manga/data/manga.dart';
 
 class HomePage extends StatefulWidget {

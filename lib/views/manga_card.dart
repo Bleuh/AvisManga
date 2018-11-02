@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:avis_manga/data/manga.dart';
-import 'package:avis_manga/views/widget/icon_star.dart';
+import 'package:avis_manga/views/icon_star.dart';
 
 class MangaCard extends StatelessWidget {
   final MangaMetadata meta;

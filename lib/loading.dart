@@ -141,7 +141,7 @@ class _LoadingPageState extends State<LoadingPage>
     }
     response = await doc.get();
     new Timer(new Duration(seconds: 2), () {
-    // TODO: only for testing
+      // TODO: only for testing
       _dataLoaded(data: {
         'test': new MangaMetadata(
             title: "Test Manga",
