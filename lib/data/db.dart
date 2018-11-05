@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:avis_manga/models/manga.dart';
+import 'package:avis_manga/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 const String mangaCollection = "Manga";
+const String userCollection = "User";
 
 class Database {
   static final Database _instance = new Database._internal();
@@ -18,19 +20,33 @@ class Database {
 
   // Authentification
 
-  Future<FirebaseUser> googleSignIn() async {
+  Future<User> _queryUser(FirebaseUser user) {
+    DocumentReference doc = _db.collection(userCollection).document(user.uid);
+    return doc.get().then((userDoc) {
+      if (userDoc.exists) {
+        return User.fromMap(userDoc.data);
+      }
+      return doc.setData({"uid": user.uid}).then((_) => User(user.uid));
+    });
+  }
+
+  Future<User> googleSignIn() async {
     return _googleSignIn.signIn().then((user) {
       return user.authentication.then((auth) {
-        return _auth.signInWithGoogle(
-          accessToken: auth.accessToken,
-          idToken: auth.idToken,
-        );
+        return _auth
+            .signInWithGoogle(
+              accessToken: auth.accessToken,
+              idToken: auth.idToken,
+            )
+            .then((user) => _queryUser(user));
       });
     });
   }
 
-  Future<FirebaseUser> emailSignIn(String email, String password) async {
-    return _auth.signInWithEmailAndPassword(email: email, password: password);
+  Future<User> emailSignIn(String email, String password) async {
+    return _auth
+        .signInWithEmailAndPassword(email: email, password: password)
+        .then((user) => _queryUser(user));
   }
 
   // Manga
