@@ -5,9 +5,10 @@ import 'dart:math';
 import 'package:avis_manga/models/manga.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:avis_manga/auth.dart';
 
-import 'home.dart';
+import 'package:avis_manga/views/login.dart';
+import 'package:avis_manga/views/home.dart';
 
 class LoadingPage extends StatefulWidget {
   LoadingPage({Key key}) : super(key: key);
@@ -58,7 +59,17 @@ class _LoadingPageState extends State<LoadingPage>
 
     _controller.forward();
 
-    _loadData();
+    Auth.getInstance().then((Auth auth) {
+      if (auth.isLogged()) {
+        _loadData();
+      }
+      else {
+        Navigator.of(context).pushReplacement(new MaterialPageRoute(
+          settings: const RouteSettings(name: '/login'),
+          builder: (context) => new LoginPage(),
+        ));
+      }
+    });
   }
 
   @override
