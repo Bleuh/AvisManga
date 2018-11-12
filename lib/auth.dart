@@ -2,8 +2,6 @@ import 'package:avis_manga/data/db.dart';
 import 'package:avis_manga/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum AuthAction { ON_LOGIN, ON_ERROR }
-
 abstract class AuthListener {
   void onLoginSuccess(User user);
   void onLoginError(String error);
