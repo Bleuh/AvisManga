@@ -21,8 +21,6 @@ class Auth {
 
   List<AuthListener> _subscribers;
 
-  static get instance => _instance;
-
   Auth.internal() {
     _subscribers = new List<AuthListener>();
     SharedPreferences.getInstance().then((SharedPreferences preferences) {
@@ -71,12 +69,14 @@ class Auth {
     return logged;
   }
 
-  void doLogin(String email, String password, ) {
+  void doLogin(String email, String password) {
     db.emailSignIn(email, password).then((User user) {
       currentUser = user;
-      prefs.setString('userId', user.uid);
-      logged = true;
-      this.notifyLogin(user);
+      prefs.setString('userId', user.uid).then((bool success) {
+        print(success);
+        logged = true;
+        this.notifyLogin(user);
+      });
     }).catchError((Exception error) => this.notifyLoginError(error.toString()));
   }
 }
