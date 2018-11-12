@@ -59,6 +59,7 @@ class _LoginState extends State<LoginPage> implements AuthListener {
                 padding: const EdgeInsets.all(8.0),
                 child: new TextFormField(
                   onSaved: (val) => _username = val,
+                  initialValue: "testtest@test.com",
                   validator: (val) {
                     return val.length < 10
                         ? "Username must have atleast 10 chars"
@@ -71,6 +72,7 @@ class _LoginState extends State<LoginPage> implements AuthListener {
                 padding: const EdgeInsets.all(8.0),
                 child: new TextFormField(
                   onSaved: (val) => _password = val,
+                  initialValue: "testtest",
                   decoration: new InputDecoration(labelText: "Password"),
                 ),
               ),

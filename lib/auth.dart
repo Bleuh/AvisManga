@@ -29,20 +29,22 @@ class Auth {
     });
   }
 
-  static Future<Auth> getInstance() async
-  {
+  static Future<Auth> getInstance() async {
     return _instance;
   }
 
   void initState() {
     logged = false;
-    userId = prefs.get('userId');
+    userId = prefs.getString('userId');
 
     if (currentUser != null && currentUser.uid == userId) {
       logged = true;
     } else if (userId != null) {
       currentUser = new User(userId);
       logged = true;
+    }
+    if (logged) {
+      this.notifyLogin(currentUser);
     }
   }
 
@@ -51,9 +53,8 @@ class Auth {
   }
 
   void dispose(AuthListener listener) {
-    for(var l in _subscribers) {
-      if(l == listener)
-         _subscribers.remove(l);
+    for (var l in _subscribers) {
+      if (l == listener) _subscribers.remove(l);
     }
   }
 
@@ -72,11 +73,9 @@ class Auth {
   void doLogin(String email, String password) {
     db.emailSignIn(email, password).then((User user) {
       currentUser = user;
-      prefs.setString('userId', user.uid).then((bool success) {
-        print(success);
-        logged = true;
-        this.notifyLogin(user);
-      });
+      prefs.setString('userId', user.uid);
+      logged = true;
+      this.notifyLogin(user);
     }).catchError((Exception error) => this.notifyLoginError(error.toString()));
   }
 }
