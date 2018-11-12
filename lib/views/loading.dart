@@ -59,7 +59,7 @@ class _LoadingPageState extends State<LoadingPage>
 
     _controller.forward();
 
-    Auth.getInstance().then((Auth auth) {
+    Auth.instance.then((Auth auth) {
       if (auth.isLogged()) {
         _loadData();
       }

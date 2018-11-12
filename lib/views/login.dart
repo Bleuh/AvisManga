@@ -21,7 +21,7 @@ class _LoginState extends State<LoginPage> implements AuthListener {
   String _username, _password;
 
   _LoginState() {
-    Auth.getInstance().then((Auth auth) {
+    Auth.instance.then((Auth auth) {
       auth.subscribe(this);
     });
   }
@@ -32,7 +32,7 @@ class _LoginState extends State<LoginPage> implements AuthListener {
     if (form.validate()) {
       form.save();
 
-      Auth.getInstance().then((Auth auth) {
+      Auth.instance.then((Auth auth) {
         auth.doLogin(_username, _password);
       });
     }

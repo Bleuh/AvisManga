@@ -18,19 +18,24 @@ class Auth {
   User currentUser;
   String userId;
   bool logged = false;
+  bool inited = false;
 
   List<AuthListener> _subscribers;
 
   Auth.internal() {
     _subscribers = new List<AuthListener>();
-    SharedPreferences.getInstance().then((SharedPreferences preferences) {
-      prefs = preferences;
-      initState();
-    });
   }
 
-  static Future<Auth> getInstance() async {
-    return _instance;
+  static Future<Auth> get instance async {
+    if (_instance.inited) {
+      return _instance;
+    }
+    _instance.inited = true;
+    return SharedPreferences.getInstance()
+        .then((SharedPreferences preferences) {
+      prefs = preferences;
+      _instance.initState();
+    }).then((_) => _instance);
   }
 
   void initState() {
