@@ -48,9 +48,6 @@ class Auth {
       currentUser = new User(userId);
       logged = true;
     }
-    if (logged) {
-      this.notifyLogin(currentUser);
-    }
   }
 
   void subscribe(AuthListener listener) {
