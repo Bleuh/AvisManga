@@ -40,12 +40,12 @@ class Auth {
     logged = false;
     userId = prefs.getString('userId');
 
-    if (currentUser != null && currentUser.uid == userId) {
-      logged = true;
-    } else if (userId != null) {
-      currentUser = new User(userId);
-      logged = true;
-    }
+    // if (currentUser != null && currentUser.uid == userId) {
+    //   logged = true;
+    // } else if (userId != null) {
+    //   currentUser = new User(userId);
+    //   logged = true;
+    // }
   }
 
   void subscribe(AuthListener listener) {
@@ -76,6 +76,6 @@ class Auth {
       prefs.setString('userId', user.uid);
       logged = true;
       this.notifyLogin(user);
-    }).catchError((Exception error) => this.notifyLoginError(error.toString()));
+    }).catchError((err) => this.notifyLoginError(err.toString()));
   }
 }
