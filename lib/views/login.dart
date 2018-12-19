@@ -1,10 +1,10 @@
 import 'dart:ui';
 
-import 'package:avis_manga/models/user.dart';
-import 'package:flutter/material.dart';
 import 'package:avis_manga/auth.dart';
-
+import 'package:avis_manga/data/error.dart';
+import 'package:avis_manga/models/user.dart';
 import 'package:avis_manga/views/loading.dart';
+import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -112,8 +112,8 @@ class _LoginState extends State<LoginPage> implements AuthListener {
   }
 
   @override
-  void onLoginError(String error) {
-    _showSnackBar(error);
+  void onLoginError(LoginError error) {
+    _showSnackBar(error.toString());
     setState(() => _isLoading = false);
   }
 

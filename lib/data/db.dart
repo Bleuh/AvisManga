@@ -49,6 +49,10 @@ class Database {
         .then((user) => _queryUser(user));
   }
 
+  Future<void> signOut() async {
+    return _auth.signOut();
+  }
+
   // Manga
 
   Future<List<MangaMetadata>> listMangas() async {

@@ -1,10 +1,11 @@
 import 'package:avis_manga/data/db.dart';
+import 'package:avis_manga/data/error.dart';
 import 'package:avis_manga/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class AuthListener {
   void onLoginSuccess(User user);
-  void onLoginError(String error);
+  void onLoginError(LoginError error);
 }
 
 class Auth {
@@ -62,7 +63,7 @@ class Auth {
     _subscribers.forEach((AuthListener s) => s.onLoginSuccess(user));
   }
 
-  void notifyLoginError(String error) {
+  void notifyLoginError(LoginError error) {
     _subscribers.forEach((AuthListener s) => s.onLoginError(error));
   }
 
@@ -76,6 +77,7 @@ class Auth {
       prefs.setString('userId', user.uid);
       logged = true;
       this.notifyLogin(user);
-    }).catchError((err) => this.notifyLoginError(err.toString()));
+    }).catchError((err) => this.notifyLoginError(
+        LoginError.cause("email sign in failed", err.toString())));
   }
 }
