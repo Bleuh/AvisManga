@@ -14,7 +14,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginState extends State<LoginPage> implements AuthListener {
-
   bool _isLoading = false;
   final formKey = new GlobalKey<FormState>();
   final scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -28,6 +27,7 @@ class _LoginState extends State<LoginPage> implements AuthListener {
 
   void _submit() {
     final form = formKey.currentState;
+    setState(() => _isLoading = true);
 
     if (form.validate()) {
       form.save();
@@ -42,8 +42,24 @@ class _LoginState extends State<LoginPage> implements AuthListener {
   Widget build(BuildContext context) {
     var loginBtn = new RaisedButton(
       onPressed: _submit,
-      child: new Text("LOGIN"),
+      child: new Text("Sign in with email"),
       color: Colors.primaries[0],
+    );
+    var googleLoginBtn = new RaisedButton(
+      onPressed: () {
+        setState(() => _isLoading = true);
+        Auth.instance.then((Auth auth) {
+          auth.doGoogleLogin();
+        });
+      },
+      child: Row(
+        children: <Widget>[
+          new Image.asset("assets/google-48.png", scale: 1.5),
+          new Text("Sign in with Google"),
+        ],
+        mainAxisSize: MainAxisSize.min,
+      ),
+      color: Colors.white70,
     );
     var loginForm = new Column(
       children: <Widget>[
@@ -79,7 +95,13 @@ class _LoginState extends State<LoginPage> implements AuthListener {
             ],
           ),
         ),
-        _isLoading ? new CircularProgressIndicator() : loginBtn
+        Column(
+          children: <Widget>[
+            _isLoading ? new CircularProgressIndicator() : loginBtn,
+            _isLoading ? new Container() : googleLoginBtn
+          ],
+          crossAxisAlignment: CrossAxisAlignment.center,
+        )
       ],
       crossAxisAlignment: CrossAxisAlignment.center,
     );
@@ -123,5 +145,10 @@ class _LoginState extends State<LoginPage> implements AuthListener {
       settings: const RouteSettings(name: '/'),
       builder: (context) => new LoadingPage(),
     ));
+  }
+
+  @override
+  void onLogout() {
+    // Should never happen
   }
 }

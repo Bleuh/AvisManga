@@ -1,8 +1,9 @@
 import 'package:flutter/services.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginError extends Error {
   String message;
-  Exception cause;
+  Object cause;
 
   LoginError(this.message);
 
@@ -13,6 +14,9 @@ class LoginError extends Error {
     if (cause != null) {
       if (cause is PlatformException) {
         causeMsg = (cause as PlatformException).message;
+        print(cause.toString());
+      } else if (cause is NoSuchMethodError) {
+        causeMsg = (cause as NoSuchMethodError).toString();
       }
     }
     if (causeMsg != null) {

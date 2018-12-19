@@ -1,3 +1,8 @@
+import 'package:avis_manga/auth.dart';
+import 'package:avis_manga/data/db.dart';
+import 'package:avis_manga/data/error.dart';
+import 'package:avis_manga/models/user.dart';
+import 'package:avis_manga/views/login.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:avis_manga/views/partials/manga_card.dart';
@@ -22,7 +27,12 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => new _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> implements AuthListener {
+
+  _HomePageState() {
+    Auth.instance.then((auth) => auth.subscribe(this));
+  }
+
   @override
   Widget build(BuildContext context) {
     var widgets = this.widget.data.values.map((meta) {
@@ -33,6 +43,14 @@ class _HomePageState extends State<HomePage> {
         // Here we take the value from the HomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: new Text(widget.title),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.exit_to_app),
+            onPressed: () {
+              Auth.instance.then((a) => a.doLogout());
+            },
+          )
+        ],
       ),
       body: new Center(
         // Center is a layout widget. It takes a single child and positions it
@@ -48,5 +66,26 @@ class _HomePageState extends State<HomePage> {
         child: new Icon(Icons.search),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  @override
+  void onLoginError(LoginError error) {
+    // We assume we are already logged in
+  }
+
+  @override
+  void onLoginSuccess(User user) {
+    // We assume we are already logged in
+  }
+
+  @override
+  void onLogout() {
+    Auth.instance.then((auth) => auth.dispose(this));
+    Navigator.of(context).pushAndRemoveUntil(
+        new MaterialPageRoute(
+          settings: const RouteSettings(name: '/'),
+          builder: (context) => new LoginPage(),
+        ),
+        (_) => false);
   }
 }
