@@ -64,10 +64,7 @@ class _LoadingPageState extends State<LoadingPage>
         _loadData();
       }
       else {
-        Navigator.of(context).pushReplacement(new MaterialPageRoute(
-          settings: const RouteSettings(name: '/login'),
-          builder: (context) => new LoginPage(),
-        ));
+        Navigator.of(context).pushReplacementNamed("/login");
       }
     });
   }
@@ -167,7 +164,7 @@ class _LoadingPageState extends State<LoadingPage>
   }
 
   void _dataLoaded({data}) {
-    Navigator.of(context).pushReplacement(new MaterialPageRoute(
+    Navigator.of(context).push(new MaterialPageRoute(
       settings: const RouteSettings(name: '/home'),
       builder: (context) => new HomePage(data: data),
     ));

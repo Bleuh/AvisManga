@@ -10,7 +10,6 @@ class IconStar extends StatelessWidget {
   @override
     Widget build(BuildContext context) {
       IconData data;
-      print(index.toString() + " " + rating.toString());
       if (index >= rating) {
         data = Icons.star_border;
       } else if (index < rating && index > (rating - 1)) {

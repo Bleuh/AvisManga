@@ -28,7 +28,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> implements AuthListener {
-
   _HomePageState() {
     Auth.instance.then((auth) => auth.subscribe(this));
   }
@@ -80,12 +79,20 @@ class _HomePageState extends State<HomePage> implements AuthListener {
 
   @override
   void onLogout() {
+    bool hasLogin = false;
+    Navigator.of(context).popUntil((route) {
+      if (route.settings.name == "/login") {
+        hasLogin = true;
+        return true;
+      }
+      if (route.isFirst) {
+        return true;
+      }
+      return false;
+    });
+    if (!hasLogin) {
+      Navigator.of(context).pushReplacementNamed("/login");
+    }
     Auth.instance.then((auth) => auth.dispose(this));
-    Navigator.of(context).pushAndRemoveUntil(
-        new MaterialPageRoute(
-          settings: const RouteSettings(name: '/'),
-          builder: (context) => new LoginPage(),
-        ),
-        (_) => false);
   }
 }

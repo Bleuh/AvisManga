@@ -141,14 +141,12 @@ class _LoginState extends State<LoginPage> implements AuthListener {
 
   @override
   void onLoginSuccess(User user) {
-    Navigator.of(context).pushReplacement(new MaterialPageRoute(
-      settings: const RouteSettings(name: '/'),
-      builder: (context) => new LoadingPage(),
-    ));
+    Navigator.of(context).pushNamed("/");
   }
 
   @override
   void onLogout() {
+    setState(() => _isLoading = false);
     // Should never happen
   }
 }
