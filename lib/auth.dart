@@ -77,7 +77,7 @@ class Auth {
       prefs.setString('userId', user.uid);
       logged = true;
       this.notifyLogin(user);
-    }).catchError((err) => this.notifyLoginError(
-        LoginError.cause("email sign in failed", err.toString())));
+    }).catchError((err) =>
+        this.notifyLoginError(LoginError.cause("Email sign in failed", err)));
   }
 }
