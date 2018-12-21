@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:avis_manga/auth.dart';
 import 'package:avis_manga/data/error.dart';
 import 'package:avis_manga/models/user.dart';
-import 'package:avis_manga/views/loading.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -14,10 +13,11 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginState extends State<LoginPage> implements AuthListener {
-  bool _isLoading = false;
-  final formKey = new GlobalKey<FormState>();
+  final signupFormKey = new GlobalKey<FormState>();
+  final loginFormKey = new GlobalKey<FormState>();
   final scaffoldKey = new GlobalKey<ScaffoldState>();
-  String _username, _password;
+  final _emailController = new TextEditingController(text: "testtest@test.com");
+  final _passwordController = new TextEditingController(text: "testtest");
 
   _LoginState() {
     Auth.instance.then((Auth auth) {
@@ -25,106 +25,620 @@ class _LoginState extends State<LoginPage> implements AuthListener {
     });
   }
 
-  void _submit() {
-    final form = formKey.currentState;
-    setState(() => _isLoading = true);
+  //void _submit() {
+  //  final form = formKey.currentState;
+  //  setState(() => _isLoading = true);
 
-    if (form.validate()) {
-      form.save();
+  //  if (form.validate()) {
+  //    form.save();
 
-      Auth.instance.then((Auth auth) {
-        auth.doLogin(_username, _password);
-      });
-    }
+  //    Auth.instance.then((Auth auth) {
+  //      auth.doLogin(_email, _password);
+  //    });
+  //  }
+  //}
+
+  gotoLogin() {
+    _controller.animateToPage(
+      0,
+      duration: Duration(milliseconds: 800),
+      curve: Curves.bounceOut,
+    );
+  }
+
+  gotoSignup() {
+    _controller.animateToPage(
+      2,
+      duration: Duration(milliseconds: 800),
+      curve: Curves.bounceOut,
+    );
+  }
+
+  PageController _controller =
+      new PageController(initialPage: 1, viewportFraction: 1.0);
+
+  Widget buildSignupButton() {
+    return new OutlineButton(
+      shape: new RoundedRectangleBorder(
+          borderRadius: new BorderRadius.circular(30.0)),
+      color: Theme.of(context).primaryColor,
+      highlightedBorderColor: Colors.white,
+      onPressed: () => gotoSignup(),
+      child: new Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: 20.0,
+          horizontal: 20.0,
+        ),
+        child: new Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            new Expanded(
+              child: Text(
+                "SIGN UP",
+                textAlign: TextAlign.center,
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildLoginButton() {
+    return new FlatButton(
+      shape: new RoundedRectangleBorder(
+          borderRadius: new BorderRadius.circular(30.0)),
+      color: Colors.white,
+      onPressed: () => gotoLogin(),
+      child: new Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: 20.0,
+          horizontal: 20.0,
+        ),
+        child: new Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            new Expanded(
+              child: Text(
+                "LOGIN",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildHomePage() {
+    return new Container(
+      height: MediaQuery.of(context).size.height,
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,
+        image: DecorationImage(
+          colorFilter: new ColorFilter.mode(
+              Colors.black.withOpacity(0.2), BlendMode.dstATop),
+          image: AssetImage('assets/images/bg-manga-home.jpg'),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: new Column(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(top: 250.0),
+            child: Center(
+              child: Icon(
+                Icons.book,
+                color: Colors.white,
+                size: 40.0,
+              ),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.only(top: 20.0),
+            child: new Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  "AvisManga",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          new Container(
+            width: MediaQuery.of(context).size.width,
+            margin: const EdgeInsets.only(left: 30.0, right: 30.0, top: 150.0),
+            alignment: Alignment.center,
+            child: new Row(
+              children: <Widget>[
+                new Expanded(child: buildSignupButton()),
+              ],
+            ),
+          ),
+          new Container(
+            width: MediaQuery.of(context).size.width,
+            margin: const EdgeInsets.only(left: 30.0, right: 30.0, top: 30.0),
+            alignment: Alignment.center,
+            child: new Row(
+              children: <Widget>[
+                new Expanded(
+                  child: buildLoginButton(),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildTextRow(String text) {
+    return new Row(
+      children: <Widget>[
+        new Expanded(
+          child: new Padding(
+            padding: const EdgeInsets.only(left: 40.0),
+            child: new Text(
+              text,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).primaryColor,
+                fontSize: 15.0,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildEmailInput() {
+    return new Container(
+      width: MediaQuery.of(context).size.width,
+      margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 10.0),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+              color: Theme.of(context).primaryColor,
+              width: 0.5,
+              style: BorderStyle.solid),
+        ),
+      ),
+      padding: const EdgeInsets.only(left: 0.0, right: 10.0),
+      child: new Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          new Expanded(
+            child: TextFormField(
+              controller: _emailController,
+              validator: (val) {
+                return val.length < 10
+                    ? "Username must have atleast 10 chars"
+                    : null;
+              },
+              textAlign: TextAlign.left,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: 'testtest@test.com',
+                hintStyle: TextStyle(color: Colors.grey),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildPasswordInput() {
+    return new Container(
+      width: MediaQuery.of(context).size.width,
+      margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 10.0),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+              color: Theme.of(context).primaryColor,
+              width: 0.5,
+              style: BorderStyle.solid),
+        ),
+      ),
+      padding: const EdgeInsets.only(left: 0.0, right: 10.0),
+      child: new Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          new Expanded(
+            child: TextFormField(
+              controller: _passwordController,
+              obscureText: true,
+              textAlign: TextAlign.left,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: '*********',
+                hintStyle: TextStyle(color: Colors.grey),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildConfirmPasswordInput() {
+    return new Container(
+      width: MediaQuery.of(context).size.width,
+      margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 10.0),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+              color: Theme.of(context).primaryColor,
+              width: 0.5,
+              style: BorderStyle.solid),
+        ),
+      ),
+      padding: const EdgeInsets.only(left: 0.0, right: 10.0),
+      child: new Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          new Expanded(
+            child: TextFormField(
+              validator: (input) {
+                return (input != _passwordController.text)
+                    ? "passwords are different"
+                    : null;
+              },
+              obscureText: true,
+              textAlign: TextAlign.left,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: '*********',
+                hintStyle: TextStyle(color: Colors.grey),
+                errorMaxLines: 1,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildExternalConnect(
+      IconData icon, String text, Color color, VoidCallback onPressed) {
+    return new Expanded(
+      child: new Container(
+        margin: EdgeInsets.only(right: 8.0),
+        alignment: Alignment.center,
+        child: new Row(
+          children: <Widget>[
+            new Expanded(
+              child: new FlatButton(
+                shape: new RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(30.0),
+                ),
+                color: color,
+                onPressed: onPressed,
+                child: new Container(
+                  child: new Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      new Expanded(
+                        child: new FlatButton(
+                          onPressed: onPressed,
+                          padding: EdgeInsets.only(
+                            top: 20.0,
+                            bottom: 20.0,
+                          ),
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              Icon(
+                                icon,
+                                color: Colors.white,
+                                size: 15.0,
+                              ),
+                              Text(
+                                text,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildConfirmButton(String text, VoidCallback onPressed, {double top: 0.0}) {
+    return new Container(
+      width: MediaQuery.of(context).size.width,
+      margin: EdgeInsets.only(left: 30.0, right: 30.0, top: top),
+      alignment: Alignment.center,
+      child: new Row(
+        children: <Widget>[
+          new Expanded(
+            child: new FlatButton(
+              shape: new RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(30.0),
+              ),
+              color: Theme.of(context).primaryColor,
+              onPressed: onPressed,
+              child: new Container(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 20.0,
+                  horizontal: 20.0,
+                ),
+                child: new Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    new Expanded(
+                      child: Text(
+                        text,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget buildLoginPage() {
+    return new Container(
+        height: MediaQuery.of(context).size.height,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          image: DecorationImage(
+            colorFilter: new ColorFilter.mode(
+                Colors.black.withOpacity(0.1), BlendMode.dstATop),
+            image: AssetImage('assets/images/bg-manga-home.jpg'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: new Form(
+            key: loginFormKey,
+            child: new ListView(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.all(120.0),
+                  child: Center(
+                    child: Icon(
+                      Icons.headset_mic,
+                      color: Theme.of(context).primaryColor,
+                      size: 50.0,
+                    ),
+                  ),
+                ),
+                buildTextRow("EMAIL"),
+                buildEmailInput(),
+                Divider(
+                  height: 24.0,
+                ),
+                buildTextRow("PASSWORD"),
+                buildPasswordInput(),
+                Divider(
+                  height: 24.0,
+                ),
+                new Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(right: 20.0),
+                      child: new FlatButton(
+                        child: new Text(
+                          "Forgot Password?",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).primaryColor,
+                            fontSize: 15.0,
+                          ),
+                          textAlign: TextAlign.end,
+                        ),
+                        onPressed: () => {},
+                      ),
+                    ),
+                  ],
+                ),
+                buildConfirmButton("LOGIN", () {
+                  if (loginFormKey.currentState.validate()) {
+                    Auth.instance.then((auth) {
+                      auth.doLogin(
+                          _emailController.text, _passwordController.text);
+                    });
+                  }
+                }, top: 0.0),
+                new Container(
+                  width: MediaQuery.of(context).size.width,
+                  margin:
+                      const EdgeInsets.only(left: 30.0, right: 30.0, top: 20.0),
+                  alignment: Alignment.center,
+                  child: Row(
+                    children: <Widget>[
+                      new Expanded(
+                        child: new Container(
+                          margin: EdgeInsets.all(8.0),
+                          decoration:
+                              BoxDecoration(border: Border.all(width: 0.25)),
+                        ),
+                      ),
+                      Text(
+                        "OR CONNECT WITH",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      new Expanded(
+                        child: new Container(
+                          margin: EdgeInsets.all(8.0),
+                          decoration:
+                              BoxDecoration(border: Border.all(width: 0.25)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                new Container(
+                  width: MediaQuery.of(context).size.width,
+                  margin:
+                      const EdgeInsets.only(left: 30.0, right: 30.0, top: 20.0),
+                  child: new Row(
+                    children: <Widget>[
+                      new Expanded(
+                        child: new Container(
+                          margin: EdgeInsets.only(left: 8.0),
+                          alignment: Alignment.center,
+                          child: new Row(
+                            children: <Widget>[
+                              buildExternalConnect(
+                                  const IconData(0xea90, fontFamily: 'icomoon'),
+                                  "FACEBOOK",
+                                  Color(0Xff3B5998), () {
+                                // TODO: facebook connect
+                              }),
+                              buildExternalConnect(
+                                  const IconData(0xea88, fontFamily: 'icomoon'),
+                                  "GOOGLE",
+                                  Color(0Xffdb3236), () {
+                                Auth.instance.then((Auth auth) {
+                                  auth.doGoogleLogin();
+                                });
+                              }),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            )));
+  }
+
+  Widget buildSignupPage() {
+    return new Container(
+      height: MediaQuery.of(context).size.height,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        image: DecorationImage(
+          colorFilter: new ColorFilter.mode(
+              Colors.black.withOpacity(0.1), BlendMode.dstATop),
+          image: AssetImage('assets/images/bg-manga-home.jpg'),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Form(
+        key: signupFormKey,
+        child: new ListView(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.all(100.0),
+              child: Center(
+                child: Icon(
+                  Icons.headset_mic,
+                  color: Theme.of(context).primaryColor,
+                  size: 50.0,
+                ),
+              ),
+            ),
+            buildTextRow("EMAIL"),
+            buildEmailInput(),
+            Divider(
+              height: 24.0,
+            ),
+            buildTextRow("PASSWORD"),
+            buildPasswordInput(),
+            Divider(
+              height: 24.0,
+            ),
+            buildTextRow("CONFIRM PASSWORD"),
+            buildConfirmPasswordInput(),
+            Divider(
+              height: 24.0,
+            ),
+            new Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(right: 20.0),
+                  child: new FlatButton(
+                    child: new Text(
+                      "Already have an account?",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 15.0,
+                      ),
+                      textAlign: TextAlign.end,
+                    ),
+                    onPressed: () async {
+                      print("Pressed");
+                      await _controller.animateToPage(0,
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.ease);
+                      print("Scrolled");
+                    },
+                  ),
+                ),
+              ],
+            ),
+            buildConfirmButton("SIGN UP", () {
+              if (signupFormKey.currentState.validate()) {
+                Auth.instance.then((auth) {
+                  auth.doSignUp(
+                      _emailController.text, _passwordController.text);
+                });
+              }
+            }, top: 50.0)
+          ],
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    var loginBtn = new RaisedButton(
-      onPressed: _submit,
-      child: new Text("Sign in with email"),
-      color: Colors.primaries[0],
-    );
-    var googleLoginBtn = new RaisedButton(
-      onPressed: () {
-        setState(() => _isLoading = true);
-        Auth.instance.then((Auth auth) {
-          auth.doGoogleLogin();
-        });
-      },
-      child: Row(
-        children: <Widget>[
-          new Image.asset("assets/google-48.png", scale: 1.5),
-          new Text("Sign in with Google"),
-        ],
-        mainAxisSize: MainAxisSize.min,
-      ),
-      color: Colors.white70,
-    );
-    var loginForm = new Column(
-      children: <Widget>[
-        new Text(
-          "Connexion",
-          textScaleFactor: 2.0,
-        ),
-        new Form(
-          key: formKey,
-          child: new Column(
+    return Scaffold(
+      body: Container(
+          height: MediaQuery.of(context).size.height,
+          child: PageView(
+            controller: _controller,
+            physics: new AlwaysScrollableScrollPhysics(),
             children: <Widget>[
-              new Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: new TextFormField(
-                  onSaved: (val) => _username = val,
-                  initialValue: "testtest@test.com",
-                  validator: (val) {
-                    return val.length < 10
-                        ? "Username must have atleast 10 chars"
-                        : null;
-                  },
-                  decoration: new InputDecoration(labelText: "Username"),
-                ),
-              ),
-              new Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: new TextFormField(
-                  onSaved: (val) => _password = val,
-                  initialValue: "testtest",
-                  decoration: new InputDecoration(labelText: "Password"),
-                ),
-              ),
+              buildLoginPage(),
+              buildHomePage(),
+              buildSignupPage()
             ],
-          ),
-        ),
-        Column(
-          children: <Widget>[
-            _isLoading ? new CircularProgressIndicator() : loginBtn,
-            _isLoading ? new Container() : googleLoginBtn
-          ],
-          crossAxisAlignment: CrossAxisAlignment.center,
-        )
-      ],
-      crossAxisAlignment: CrossAxisAlignment.center,
-    );
-
-    return new Scaffold(
-      appBar: null,
-      key: scaffoldKey,
-      body: new Container(
-        child: new Center(
-          child: new ClipRect(
-            child: new BackdropFilter(
-              child: new Container(
-                child: loginForm,
-                height: 300.0,
-                width: 300.0,
-                decoration: new BoxDecoration(
-                    color: Colors.grey.shade200.withOpacity(0.5)),
-              ),
-              filter: new ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-            ),
-          ),
-        ),
-      ),
+            scrollDirection: Axis.horizontal,
+          )),
     );
   }
 
@@ -136,7 +650,6 @@ class _LoginState extends State<LoginPage> implements AuthListener {
   @override
   void onLoginError(LoginError error) {
     _showSnackBar(error.toString());
-    setState(() => _isLoading = false);
   }
 
   @override
@@ -145,8 +658,5 @@ class _LoginState extends State<LoginPage> implements AuthListener {
   }
 
   @override
-  void onLogout() {
-    setState(() => _isLoading = false);
-    // Should never happen
-  }
+  void onLogout() {}
 }

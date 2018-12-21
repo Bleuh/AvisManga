@@ -2,7 +2,7 @@ import 'package:avis_manga/auth.dart';
 import 'package:avis_manga/data/db.dart';
 import 'package:avis_manga/data/error.dart';
 import 'package:avis_manga/models/user.dart';
-import 'package:avis_manga/views/login.1.dart';
+import 'package:avis_manga/views/login.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:avis_manga/views/partials/manga_card.dart';
