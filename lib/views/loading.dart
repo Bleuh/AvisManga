@@ -1,14 +1,12 @@
 import 'dart:async';
-import 'dart:typed_data';
-import 'dart:math';
 
 import 'package:avis_manga/models/manga.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:avis_manga/auth.dart';
 
-import 'package:avis_manga/views/login.dart';
 import 'package:avis_manga/views/home.dart';
+import 'package:avis_manga/views/partials/loader.dart';
 
 class LoadingPage extends StatefulWidget {
   LoadingPage({Key key}) : super(key: key);
@@ -17,47 +15,11 @@ class LoadingPage extends StatefulWidget {
   _LoadingPageState createState() => new _LoadingPageState();
 }
 
-class _LoadingPageState extends State<LoadingPage>
-    with SingleTickerProviderStateMixin {
-  bool _loadingInProgress;
-
-  Animation<double> _angleAnimation;
-  Animation<double> _scaleAnimation;
-  AnimationController _controller;
+class _LoadingPageState extends State<LoadingPage> {
 
   @override
   void initState() {
     super.initState();
-    _loadingInProgress = true;
-
-    _controller = new AnimationController(
-        duration: const Duration(milliseconds: 2000), vsync: this);
-    _angleAnimation = new Tween(begin: 0.0, end: 360.0).animate(_controller)
-      ..addListener(() {
-        setState(() {
-          // the state that has changed here is the animation object’s value
-        });
-      });
-    _scaleAnimation = new Tween(begin: 1.0, end: 6.0).animate(_controller)
-      ..addListener(() {
-        setState(() {
-          // the state that has changed here is the animation object’s value
-        });
-      });
-
-    _angleAnimation.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        if (_loadingInProgress) {
-          _controller.reverse();
-        }
-      } else if (status == AnimationStatus.dismissed) {
-        if (_loadingInProgress) {
-          _controller.forward();
-        }
-      }
-    });
-
-    _controller.forward();
 
     Auth.instance.then((Auth auth) {
       if (auth.isLogged()) {
@@ -70,12 +32,6 @@ class _LoadingPageState extends State<LoadingPage>
   }
 
   @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return new Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
@@ -84,60 +40,37 @@ class _LoadingPageState extends State<LoadingPage>
   }
 
   Widget _buildBody() {
-    return Column(
-      children: <Widget>[
-        Container(
-          height: 150.0,
-          padding: EdgeInsets.only(bottom: 20.0),
-          child: Center(child: _buildAnimation()),
+    return new Container(
+      height: MediaQuery.of(context).size.height,
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,
+        image: DecorationImage(
+          colorFilter: new ColorFilter.mode(
+            Colors.black.withOpacity(0.2), BlendMode.dstATop),
+          image: AssetImage('assets/images/bg-manga-home.jpg'),
+          fit: BoxFit.cover,
         ),
-        Text('Loading', style: TextStyle(color: Colors.white))
-      ],
-      mainAxisAlignment: MainAxisAlignment.center,
-    );
-  }
-
-  Widget _buildAnimation() {
-    double circleWidth = 10.0 * _scaleAnimation.value;
-    Widget circles = new Container(
-      width: circleWidth * 2.0,
-      height: circleWidth * 2.0,
+      ),
       child: new Column(
         children: <Widget>[
-          new Row(
-            children: <Widget>[
-              _buildCircle(circleWidth, Colors.blue),
-              _buildCircle(circleWidth, Colors.red),
-            ],
+          Container(
+            height: 150.0,
+            padding: EdgeInsets.only(bottom: 20.0),
+            child: Center(
+              child: Loader(
+                  color1: Colors.redAccent,
+                  color2: Colors.green,
+                  color3: Colors.amber,
+                  size: 100.0
+                ),
+            )
           ),
-          new Row(
-            children: <Widget>[
-              _buildCircle(circleWidth, Colors.yellow),
-              _buildCircle(circleWidth, Colors.green),
-            ],
-          ),
+          Text('Loading...', style: TextStyle(color: Colors.white))
         ],
-      ),
+        mainAxisAlignment: MainAxisAlignment.center,
+      )
     );
 
-    double angleInDegrees = _angleAnimation.value;
-    return new Transform.rotate(
-      angle: angleInDegrees / 360 * 2 * pi,
-      child: new Container(
-        child: circles,
-      ),
-    );
-  }
-
-  Widget _buildCircle(double circleWidth, Color color) {
-    return new Container(
-      width: circleWidth,
-      height: circleWidth,
-      decoration: new BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-      ),
-    );
   }
 
   Future _loadData() async {

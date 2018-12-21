@@ -64,7 +64,7 @@ class _LoginState extends State<LoginPage> implements AuthListener {
     var loginForm = new Column(
       children: <Widget>[
         new Text(
-          "Login App",
+          "Connexion",
           textScaleFactor: 2.0,
         ),
         new Form(

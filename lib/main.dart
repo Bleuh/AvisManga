@@ -10,6 +10,7 @@ class MyApp extends StatelessWidget {
       title: 'Avis Manga',
       theme: new ThemeData(
         primarySwatch:themeColor,
+        primaryColor:themeColor
       ),
       routes: routes,
       initialRoute: "/",
