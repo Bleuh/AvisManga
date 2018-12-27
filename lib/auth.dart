@@ -2,11 +2,15 @@ import 'package:avis_manga/data/db.dart';
 import 'package:avis_manga/data/error.dart';
 import 'package:avis_manga/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
-abstract class AuthListener {
-  void onLoginSuccess(User user);
-  void onLoginError(LoginError error);
-  void onLogout();
+class AuthListener {
+  String _uuid;
+  final void Function(User user) onLoginSuccess;
+  final void Function(LoginError err) onLoginError;
+  final void Function() onLogout;
+
+  AuthListener({this.onLoginSuccess, this.onLoginError, this.onLogout});
 }
 
 class Auth {
@@ -21,9 +25,11 @@ class Auth {
   bool inited = false;
 
   List<AuthListener> _subscribers;
+  Uuid _uuid;
 
   Auth.internal() {
     _subscribers = new List<AuthListener>();
+    _uuid = new Uuid();
   }
 
   static Future<Auth> get instance async {
@@ -52,6 +58,7 @@ class Auth {
 
   void subscribe(AuthListener listener) {
     _subscribers.add(listener);
+    listener._uuid = _uuid.v1();
   }
 
   void dispose(AuthListener listener) {
@@ -60,17 +67,29 @@ class Auth {
 
   void notifyLogin(User user) {
     print("Notifying login to " + _subscribers.length.toString());
-    _subscribers.forEach((AuthListener s) => s.onLoginSuccess(user));
+    _subscribers.forEach((AuthListener s) {
+      if (s != null && s.onLoginSuccess != null) {
+        s.onLoginSuccess(user);
+      }
+    });
   }
 
   void notifyLoginError(LoginError error) {
     print("Notifying login error to " + _subscribers.length.toString());
-    _subscribers.forEach((AuthListener s) => s.onLoginError(error));
+    _subscribers.forEach((AuthListener s) {
+      if (s != null && s.onLoginError != null) {
+        s.onLoginError(error);
+      }
+    });
   }
 
   void notifyLogout() {
     print("Notifying logout to " + _subscribers.length.toString());
-    _subscribers.forEach((AuthListener s) => s.onLogout());
+    _subscribers.forEach((AuthListener s) {
+      if (s != null && s.onLogout != null) {
+        s.onLogout();
+      }
+    });
   }
 
   bool isLogged() {

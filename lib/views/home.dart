@@ -28,37 +28,41 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => new _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> implements AuthListener {
+class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
-  List<Widget> _children = [
-    Text('Index 0: Home'),
-    Text('Index 1: Business'),
-    Text('Index 2: School'),
-  ];
+  List<Widget> _children;
+
+  AuthListener _listener;
 
   @override
   void initState() {
     super.initState();
-    var widgets = this.widget.data.values.map((meta) {
-      return MangaCard(meta);
-    }).toList();
+    // var widgets = this.widget.data.values.map((meta) {
+    //   return MangaCard(meta);
+    // }).toList();
 
+    // _children = [
+    //   Feed(widgets),
+    //   Feed(widgets), // waiting other page
+    //   Feed(widgets) // waiting other page
+    // ];
     _children = [
-      Feed(widgets),
-      Feed(widgets), // waiting other page
-      Feed(widgets) // waiting other page
+      Text('Index 0: Home'),
+      Text('Index 1: Business'),
+      Text('Index 2: School'),
     ];
   }
 
   _HomePageState() {
-    Auth.instance.then((auth) => auth.subscribe(this));
+    _listener = new AuthListener(onLogout: onLogout);
+    Auth.instance.then((auth) => auth.subscribe(_listener));
   }
 
   void onTabTapped(int index) {
-   setState(() {
-     _currentIndex = index;
-   });
- }
+    setState(() {
+      _currentIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +87,7 @@ class _HomePageState extends State<HomePage> implements AuthListener {
           onPressed: () => print("Pressed"),
           tooltip: 'Search',
           child: new Icon(Icons.search),
-        ), // This trailing comma makes auto-formatting nicer for build methods.
+        ),
         bottomNavigationBar: BottomNavigationBar(
           onTap: onTabTapped,
           currentIndex: _currentIndex,
@@ -97,26 +101,13 @@ class _HomePageState extends State<HomePage> implements AuthListener {
               title: Text('Favorites'),
             ),
             new BottomNavigationBarItem(
-              icon: Icon(Icons.person_pin),
-              title: Text('Friends')
-            )
+                icon: Icon(Icons.person_pin), title: Text('Friends'))
           ],
         ),
       ),
     );
   }
 
-  @override
-  void onLoginError(LoginError error) {
-    // We assume we are already logged in
-  }
-
-  @override
-  void onLoginSuccess(User user) {
-    // We assume we are already logged in
-  }
-
-  @override
   void onLogout() {
     bool hasLogin = false;
     Navigator.of(context).popUntil((route) {
@@ -132,6 +123,12 @@ class _HomePageState extends State<HomePage> implements AuthListener {
     if (!hasLogin) {
       Navigator.of(context).pushReplacementNamed("/login");
     }
-    Auth.instance.then((auth) => auth.dispose(this));
+    Auth.instance.then((auth) => auth.dispose(_listener));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    Auth.instance.then((auth) => auth.dispose(_listener));
   }
 }

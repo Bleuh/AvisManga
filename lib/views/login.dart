@@ -12,16 +12,19 @@ class LoginPage extends StatefulWidget {
   _LoginState createState() => new _LoginState();
 }
 
-class _LoginState extends State<LoginPage> implements AuthListener {
+class _LoginState extends State<LoginPage> {
   final signupFormKey = new GlobalKey<FormState>();
   final loginFormKey = new GlobalKey<FormState>();
   final scaffoldKey = new GlobalKey<ScaffoldState>();
   final _emailController = new TextEditingController(text: "testtest@test.com");
   final _passwordController = new TextEditingController(text: "testtest");
+  
+  AuthListener _listener;
 
   _LoginState() {
+    _listener = new AuthListener(onLoginSuccess: onLoginSuccess, onLoginError: onLoginError);
     Auth.instance.then((Auth auth) {
-      auth.subscribe(this);
+      auth.subscribe(_listener);
     });
   }
 
@@ -613,6 +616,7 @@ class _LoginState extends State<LoginPage> implements AuthListener {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       body: Container(
           height: MediaQuery.of(context).size.height,
           child: PageView(
@@ -633,16 +637,16 @@ class _LoginState extends State<LoginPage> implements AuthListener {
         .showSnackBar(new SnackBar(content: new Text(text)));
   }
 
-  @override
   void onLoginError(LoginError error) {
     _showSnackBar(error.toString());
   }
-
-  @override
   void onLoginSuccess(User user) {
     Navigator.of(context).pushNamed("/");
   }
 
   @override
-  void onLogout() {}
+  void dispose() {
+    super.dispose();
+    Auth.instance.then((auth) => auth.dispose(_listener));
+  }
 }
