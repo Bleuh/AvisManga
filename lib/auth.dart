@@ -55,9 +55,7 @@ class Auth {
   }
 
   void dispose(AuthListener listener) {
-    for (var l in _subscribers) {
-      if (l == listener) _subscribers.remove(l);
-    }
+    _subscribers.remove(listener);
   }
 
   void notifyLogin(User user) {
