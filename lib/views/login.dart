@@ -25,24 +25,11 @@ class _LoginState extends State<LoginPage> implements AuthListener {
     });
   }
 
-  //void _submit() {
-  //  final form = formKey.currentState;
-  //  setState(() => _isLoading = true);
-
-  //  if (form.validate()) {
-  //    form.save();
-
-  //    Auth.instance.then((Auth auth) {
-  //      auth.doLogin(_email, _password);
-  //    });
-  //  }
-  //}
-
   gotoLogin() {
     _controller.animateToPage(
       0,
       duration: Duration(milliseconds: 800),
-      curve: Curves.bounceOut,
+      curve: Curves.fastOutSlowIn,
     );
   }
 
@@ -50,7 +37,7 @@ class _LoginState extends State<LoginPage> implements AuthListener {
     _controller.animateToPage(
       2,
       duration: Duration(milliseconds: 800),
-      curve: Curves.bounceOut,
+      curve: Curves.fastOutSlowIn,
     );
   }
 
@@ -130,12 +117,12 @@ class _LoginState extends State<LoginPage> implements AuthListener {
       child: new Column(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(top: 250.0),
+            padding: EdgeInsets.only(top: 150.0),
             child: Center(
               child: Icon(
                 Icons.book,
                 color: Colors.white,
-                size: 40.0,
+                size: 100.0,
               ),
             ),
           ),
@@ -145,7 +132,7 @@ class _LoginState extends State<LoginPage> implements AuthListener {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  "AvisManga",
+                  "Avis Manga",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20.0,
@@ -154,23 +141,23 @@ class _LoginState extends State<LoginPage> implements AuthListener {
               ],
             ),
           ),
-          new Container(
+          Container(
             width: MediaQuery.of(context).size.width,
             margin: const EdgeInsets.only(left: 30.0, right: 30.0, top: 150.0),
             alignment: Alignment.center,
             child: new Row(
               children: <Widget>[
-                new Expanded(child: buildSignupButton()),
+                Expanded(child: buildSignupButton()),
               ],
             ),
           ),
-          new Container(
+          Container(
             width: MediaQuery.of(context).size.width,
             margin: const EdgeInsets.only(left: 30.0, right: 30.0, top: 30.0),
             alignment: Alignment.center,
             child: new Row(
               children: <Widget>[
-                new Expanded(
+                Expanded(
                   child: buildLoginButton(),
                 ),
               ],
@@ -315,8 +302,7 @@ class _LoginState extends State<LoginPage> implements AuthListener {
     );
   }
 
-  Widget buildExternalConnect(
-      IconData icon, String text, Color color, VoidCallback onPressed) {
+  Widget buildExternalConnect(IconData icon, String text, Color color, VoidCallback onPressed) {
     return new Expanded(
       child: new Container(
         margin: EdgeInsets.only(right: 8.0),
@@ -342,19 +328,23 @@ class _LoginState extends State<LoginPage> implements AuthListener {
                             bottom: 20.0,
                           ),
                           child: new Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              Icon(
-                                icon,
-                                color: Colors.white,
-                                size: 15.0,
+                              Padding(
+                                padding: EdgeInsets.only(right: 10.0),
+                                child: Icon(
+                                  icon,
+                                  color: Colors.white,
+                                  size: 15.0,
+                                )
                               ),
                               Text(
                                 text,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold
+                                ),
                               ),
                             ],
                           ),
@@ -413,134 +403,130 @@ class _LoginState extends State<LoginPage> implements AuthListener {
 
   Widget buildLoginPage() {
     return new Container(
-        height: MediaQuery.of(context).size.height,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          image: DecorationImage(
-            colorFilter: new ColorFilter.mode(
-                Colors.black.withOpacity(0.1), BlendMode.dstATop),
-            image: AssetImage('assets/images/bg-manga-home.jpg'),
-            fit: BoxFit.cover,
+      height: MediaQuery.of(context).size.height,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        image: DecorationImage(
+          colorFilter: new ColorFilter.mode(
+            Colors.black.withOpacity(0.1), BlendMode.dstATop
           ),
+          image: AssetImage('assets/images/bg-manga-home.jpg'),
+          fit: BoxFit.cover,
         ),
-        child: new Form(
-            key: loginFormKey,
-            child: new ListView(
+      ),
+      child: new Form(
+        key: loginFormKey,
+        child: new ListView(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.all(MediaQuery.of(context).size.width / 4),
+              child: Center(
+                child: Icon(
+                  Icons.headset_mic,
+                  color: Theme.of(context).primaryColor,
+                  size: 50.0,
+                ),
+              ),
+            ),
+            buildTextRow("EMAIL"),
+            buildEmailInput(),
+            Divider(
+              height: 24.0,
+            ),
+            buildTextRow("PASSWORD"),
+            buildPasswordInput(),
+            Divider(
+              height: 24.0,
+            ),
+            new Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                Container(
-                  padding: EdgeInsets.all(120.0),
-                  child: Center(
-                    child: Icon(
-                      Icons.headset_mic,
-                      color: Theme.of(context).primaryColor,
-                      size: 50.0,
+                Padding(
+                  padding: const EdgeInsets.only(right: 20.0),
+                  child: new FlatButton(
+                    child: new Text(
+                      "Forgot Password?",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 15.0,
+                      ),
+                      textAlign: TextAlign.end,
                     ),
+                    onPressed: () => {},
                   ),
                 ),
-                buildTextRow("EMAIL"),
-                buildEmailInput(),
-                Divider(
-                  height: 24.0,
-                ),
-                buildTextRow("PASSWORD"),
-                buildPasswordInput(),
-                Divider(
-                  height: 24.0,
-                ),
-                new Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(right: 20.0),
-                      child: new FlatButton(
-                        child: new Text(
-                          "Forgot Password?",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).primaryColor,
-                            fontSize: 15.0,
-                          ),
-                          textAlign: TextAlign.end,
-                        ),
-                        onPressed: () => {},
-                      ),
-                    ),
-                  ],
-                ),
-                buildConfirmButton("LOGIN", () {
-                  if (loginFormKey.currentState.validate()) {
-                    Auth.instance.then((auth) {
-                      auth.doLogin(
-                          _emailController.text, _passwordController.text);
-                    });
-                  }
-                }, top: 0.0),
-                new Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin:
-                      const EdgeInsets.only(left: 30.0, right: 30.0, top: 20.0),
-                  alignment: Alignment.center,
-                  child: Row(
-                    children: <Widget>[
-                      new Expanded(
-                        child: new Container(
-                          margin: EdgeInsets.all(8.0),
-                          decoration:
-                              BoxDecoration(border: Border.all(width: 0.25)),
-                        ),
-                      ),
-                      Text(
-                        "OR CONNECT WITH",
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      new Expanded(
-                        child: new Container(
-                          margin: EdgeInsets.all(8.0),
-                          decoration:
-                              BoxDecoration(border: Border.all(width: 0.25)),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                new Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin:
-                      const EdgeInsets.only(left: 30.0, right: 30.0, top: 20.0),
-                  child: new Row(
-                    children: <Widget>[
-                      new Expanded(
-                        child: new Container(
-                          margin: EdgeInsets.only(left: 8.0),
-                          alignment: Alignment.center,
-                          child: new Row(
-                            children: <Widget>[
-                              buildExternalConnect(
-                                  const IconData(0xea90, fontFamily: 'icomoon'),
-                                  "FACEBOOK",
-                                  Color(0Xff3B5998), () {
-                                // TODO: facebook connect
-                              }),
-                              buildExternalConnect(
-                                  const IconData(0xea88, fontFamily: 'icomoon'),
-                                  "GOOGLE",
-                                  Color(0Xffdb3236), () {
-                                Auth.instance.then((Auth auth) {
-                                  auth.doGoogleLogin();
-                                });
-                              }),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
               ],
-            )));
+            ),
+            buildConfirmButton("LOGIN", () {
+              if (loginFormKey.currentState.validate()) {
+                Auth.instance.then((auth) {
+                  auth.doLogin(
+                    _emailController.text, _passwordController.text
+                  );
+                });
+              }
+            }, top: 0.0),
+            new Container(
+              width: MediaQuery.of(context).size.width,
+              margin:
+                  const EdgeInsets.only(left: 30.0, right: 30.0, top: 20.0),
+              alignment: Alignment.center,
+              child: Row(
+                children: <Widget>[
+                  new Expanded(
+                    child: new Container(
+                      margin: EdgeInsets.all(8.0),
+                      decoration:
+                          BoxDecoration(border: Border.all(width: 0.25)),
+                    ),
+                  ),
+                  Text(
+                    "OR CONNECT WITH",
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  new Expanded(
+                    child: new Container(
+                      margin: EdgeInsets.all(8.0),
+                      decoration:
+                          BoxDecoration(border: Border.all(width: 0.25)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            new Container(
+              width: MediaQuery.of(context).size.width,
+              margin:
+                  const EdgeInsets.only(left: 30.0, right: 30.0, top: 20.0),
+              child: new Row(
+                children: <Widget>[
+                  new Expanded(
+                    child: new Container(
+                      margin: EdgeInsets.only(left: 8.0),
+                      alignment: Alignment.center,
+                      child: new Row(
+                        children: <Widget>[
+                          buildExternalConnect(
+                              const IconData(0xea88, fontFamily: 'icomoon'),
+                              "GOOGLE",
+                              Color(0Xffdb3236), () {
+                            Auth.instance.then((Auth auth) {
+                              auth.doGoogleLogin();
+                            });
+                          }),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        )));
   }
 
   Widget buildSignupPage() {
@@ -560,7 +546,7 @@ class _LoginState extends State<LoginPage> implements AuthListener {
         child: new ListView(
           children: <Widget>[
             Container(
-              padding: EdgeInsets.all(100.0),
+              padding: EdgeInsets.all(MediaQuery.of(context).size.width / 4),
               child: Center(
                 child: Icon(
                   Icons.headset_mic,
@@ -591,7 +577,7 @@ class _LoginState extends State<LoginPage> implements AuthListener {
                   padding: const EdgeInsets.only(right: 20.0),
                   child: new FlatButton(
                     child: new Text(
-                      "Already have an account?",
+                      "Already have an account ?",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).primaryColor,
@@ -617,7 +603,7 @@ class _LoginState extends State<LoginPage> implements AuthListener {
                       _emailController.text, _passwordController.text);
                 });
               }
-            }, top: 50.0)
+            }, top: 0.0)
           ],
         ),
       ),

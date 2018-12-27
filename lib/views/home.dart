@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:avis_manga/views/partials/manga_card.dart';
 import 'package:avis_manga/models/manga.dart';
+import 'package:avis_manga/views/partials/feed.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.data}) : super(key: key);
@@ -28,15 +29,39 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> implements AuthListener {
+  int _currentIndex = 0;
+  List<Widget> _children = [
+    Text('Index 0: Home'),
+    Text('Index 1: Business'),
+    Text('Index 2: School'),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    var widgets = this.widget.data.values.map((meta) {
+      return MangaCard(meta);
+    }).toList();
+
+    _children = [
+      Feed(widgets),
+      Feed(widgets), // waiting other page
+      Feed(widgets) // waiting other page
+    ];
+  }
+
   _HomePageState() {
     Auth.instance.then((auth) => auth.subscribe(this));
   }
 
+  void onTabTapped(int index) {
+   setState(() {
+     _currentIndex = index;
+   });
+ }
+
   @override
   Widget build(BuildContext context) {
-    var widgets = this.widget.data.values.map((meta) {
-      return MangaCard(meta);
-    }).toList();
     return WillPopScope(
       onWillPop: () => Future.value(false),
       child: new Scaffold(
@@ -53,19 +78,30 @@ class _HomePageState extends State<HomePage> implements AuthListener {
             )
           ],
         ),
-        body: new Center(
-          // Center is a layout widget. It takes a single child and positions it
-          // in the middle of the parent.
-          child: new Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: widgets,
-          ),
-        ),
+        body: _children.elementAt(_currentIndex),
         floatingActionButton: new FloatingActionButton(
           onPressed: () => print("Pressed"),
           tooltip: 'Search',
           child: new Icon(Icons.search),
         ), // This trailing comma makes auto-formatting nicer for build methods.
+        bottomNavigationBar: BottomNavigationBar(
+          onTap: onTabTapped,
+          currentIndex: _currentIndex,
+          items: [
+            new BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              title: Text('Home'),
+            ),
+            new BottomNavigationBarItem(
+              icon: Icon(Icons.favorite),
+              title: Text('Favorites'),
+            ),
+            new BottomNavigationBarItem(
+              icon: Icon(Icons.person_pin),
+              title: Text('Friends')
+            )
+          ],
+        ),
       ),
     );
   }
