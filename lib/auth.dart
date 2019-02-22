@@ -51,8 +51,10 @@ class Auth {
     if (currentUser != null && currentUser.uid == userId) {
       logged = true;
     } else if (userId != null) {
-      currentUser = new User(userId);
-      logged = true;
+      db.queryUserFromUid(userId).then((user) {
+        this.currentUser = user;
+        logged = true;
+      });
     }
   }
 

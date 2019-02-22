@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:avis_manga/models/manga.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:avis_manga/auth.dart';
+
+import 'package:avis_manga/data/db.dart';
 
 import 'package:avis_manga/views/home.dart';
 import 'package:avis_manga/views/partials/loader.dart';
@@ -74,26 +74,9 @@ class _LoadingPageState extends State<LoadingPage> {
   }
 
   Future _loadData() async {
-    final data = {"test": "fabulous"};
-    final doc = Firestore.instance.collection("test").document();
-    var response = await doc.get();
-    if (response.data == null || response.data["test"] != data["test"]) {
-      await doc.setData(data);
-    }
-    response = await doc.get();
-    new Timer(new Duration(seconds: 2), () {
-      // TODO: only for testing
-      _dataLoaded(data: {
-        'test': new MangaMetadata(
-            title: "Test Manga",
-            description:
-                "a manga for testing. this is a very long description and i don't what to say but this is for testing purpose. bajlkjadlkjasjdksldjlakjsdjldakjkjl",
-            mainImage: "https://cdn.japscan.cc/lel/Radiant/1/05.jpg",
-            nbChap: 10,
-            rating: 3.5,
-            tags: ["Comedy", "Action", "Slice of life"]),
-      });
-    });
+    Database.instance.listMangas().then(
+      (mangas) => _dataLoaded(data: mangas)
+    );
   }
 
   void _dataLoaded({data}) {

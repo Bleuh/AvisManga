@@ -26,7 +26,19 @@ class Database {
       if (userDoc.exists) {
         return User.fromMap(userDoc.data);
       }
-      return doc.setData({"uid": user.uid}).then((_) => User(user.uid));
+      return doc.setData({"uid": user.uid, "avatar": user.photoUrl, "name": user.displayName, "email": user.email}).then((_) => User(user.uid, user.photoUrl, user.displayName, user.email, 0));
+    });
+  }
+
+  Future<User> queryUserFromUid(String userUid) {
+    DocumentReference doc = _db.collection(userCollection).document(userUid);
+    return doc.get().then((userDoc) {
+      if (userDoc.exists) {
+        return User.fromMap(userDoc.data);
+      }
+      else {
+        return null;
+      }
     });
   }
 

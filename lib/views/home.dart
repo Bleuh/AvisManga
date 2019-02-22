@@ -1,28 +1,18 @@
 import 'package:avis_manga/auth.dart';
-import 'package:avis_manga/data/db.dart';
-import 'package:avis_manga/data/error.dart';
-import 'package:avis_manga/models/user.dart';
-import 'package:avis_manga/views/login.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:avis_manga/views/partials/manga_card.dart';
+import 'package:avis_manga/views/partials/previews/manga_card.dart';
+import 'package:avis_manga/views/partials/previews/favorite_card.dart';
 import 'package:avis_manga/models/manga.dart';
+import 'package:avis_manga/models/user.dart';
 import 'package:avis_manga/views/partials/feed.dart';
+import 'package:avis_manga/views/partials/favorites.dart';
+import 'package:avis_manga/views/partials/home_drawer.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.data}) : super(key: key);
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title = 'homepage';
-  final Map<String, dynamic> data;
+  final String title = 'AvisManga';
+  final List<MangaMetadata> data;
 
   @override
   _HomePageState createState() => new _HomePageState();
@@ -31,31 +21,51 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   List<Widget> _children;
+  List<PopupMenuItem<String>> _options;
+
+  bool friendFilter = false;
 
   AuthListener _listener;
+
+  User user;
 
   @override
   void initState() {
     super.initState();
-    // var widgets = this.widget.data.values.map((meta) {
-    //   return MangaCard(meta);
-    // }).toList();
+    var widgets = this.widget.data.map((meta) {
+      return MangaCard(meta);
+    }).toList();
 
-    // _children = [
-    //   Feed(widgets),
-    //   Feed(widgets), // waiting other page
-    //   Feed(widgets) // waiting other page
-    // ];
+    var widgetsFavorites = this.widget.data.map((meta) {
+      return FavoriteCard(meta);
+    }).toList();
+
+    _options = [
+      new PopupMenuItem<String> (
+        value: 'lol',
+        child: new SwitchListTile(
+            value: friendFilter,
+            onChanged: (_) => print('change'),
+            title: new Text('View only friends'),
+        )
+      )
+    ];
+
     _children = [
-      Text('Index 0: Home'),
-      Text('Index 1: Business'),
-      Text('Index 2: School'),
+      Feed(widgets),
+      Favorites(widgetsFavorites),
+      Feed(widgets) // waiting other page
     ];
   }
 
   _HomePageState() {
     _listener = new AuthListener(onLogout: onLogout);
-    Auth.instance.then((auth) => auth.subscribe(_listener));
+    Auth.instance.then((auth) {
+      auth.subscribe(_listener);
+      setState(() {
+        user = auth.currentUser;
+      });
+    });
   }
 
   void onTabTapped(int index) {
@@ -70,19 +80,17 @@ class _HomePageState extends State<HomePage> {
       onWillPop: () => Future.value(false),
       child: new Scaffold(
         appBar: new AppBar(
-          // Here we take the value from the HomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
           title: new Text(widget.title),
           actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.exit_to_app),
-              onPressed: () {
-                Auth.instance.then((a) => a.doLogout());
+            PopupMenuButton<String>(
+              itemBuilder: (BuildContext context) {
+                return _options;
               },
             )
           ],
         ),
-        body: _children.elementAt(_currentIndex),
+        drawer: HomeDrawer(this.user),
+        body: _children[_currentIndex],
         floatingActionButton: new FloatingActionButton(
           onPressed: () => print("Pressed"),
           tooltip: 'Search',
@@ -101,7 +109,9 @@ class _HomePageState extends State<HomePage> {
               title: Text('Favorites'),
             ),
             new BottomNavigationBarItem(
-                icon: Icon(Icons.person_pin), title: Text('Friends'))
+              icon: Icon(Icons.person_pin),
+              title: Text('Friends')
+            )
           ],
         ),
       ),

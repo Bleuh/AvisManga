@@ -18,7 +18,7 @@ class _LoginState extends State<LoginPage> {
   final scaffoldKey = new GlobalKey<ScaffoldState>();
   final _emailController = new TextEditingController(text: "testtest@test.com");
   final _passwordController = new TextEditingController(text: "testtest");
-  
+
   AuthListener _listener;
 
   _LoginState() {
