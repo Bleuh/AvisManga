@@ -122,10 +122,10 @@ class _LoginState extends State<LoginPage> {
           Container(
             padding: EdgeInsets.only(top: 150.0),
             child: Center(
-              child: Icon(
-                Icons.book,
-                color: Colors.white,
-                size: 100.0,
+              child: Image.asset(
+                'assets/logo.png',
+                width: 150.0,
+                height: 150.0
               ),
             ),
           ),
@@ -146,7 +146,7 @@ class _LoginState extends State<LoginPage> {
           ),
           Container(
             width: MediaQuery.of(context).size.width,
-            margin: const EdgeInsets.only(left: 30.0, right: 30.0, top: 150.0),
+            margin: const EdgeInsets.only(left: 30.0, right: 30.0, top: 100.0),
             alignment: Alignment.center,
             child: new Row(
               children: <Widget>[
@@ -422,12 +422,12 @@ class _LoginState extends State<LoginPage> {
         child: new ListView(
           children: <Widget>[
             Container(
-              padding: EdgeInsets.all(MediaQuery.of(context).size.width / 4),
+              padding: EdgeInsets.all(30.0),
               child: Center(
-                child: Icon(
-                  Icons.headset_mic,
-                  color: Theme.of(context).primaryColor,
-                  size: 50.0,
+                child: Image.asset(
+                  'assets/logo.png',
+                  width: 150.0,
+                  height: 150.0
                 ),
               ),
             ),
@@ -549,12 +549,12 @@ class _LoginState extends State<LoginPage> {
         child: new ListView(
           children: <Widget>[
             Container(
-              padding: EdgeInsets.all(MediaQuery.of(context).size.width / 4),
+              padding: EdgeInsets.all(30.0),
               child: Center(
-                child: Icon(
-                  Icons.headset_mic,
-                  color: Theme.of(context).primaryColor,
-                  size: 50.0,
+                child: Image.asset(
+                  'assets/logo.png',
+                  width: 150.0,
+                  height: 150.0
                 ),
               ),
             ),
