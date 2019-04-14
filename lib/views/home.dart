@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
 
     _options = [
       new PopupMenuItem<String> (
-        value: 'lol',
+        value: 'friend_only',
         child: new SwitchListTile(
             value: friendFilter,
             onChanged: (_) => print('change'),

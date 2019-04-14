@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:avis_manga/models/user.dart';
 import 'package:avis_manga/auth.dart';
@@ -11,13 +12,13 @@ class HomeDrawer extends StatelessWidget {
     return Drawer(
       child: Stack(
         children: <Widget>[
-          new ListView(
+          ListView(
             children: <Widget>[
               new UserAccountsDrawerHeader(
                 accountName: new Text(user.name != null ? user.name : 'Anonymous'),
                 accountEmail: new Text((user.wallet != null ? user.wallet.toString() : '0') + ' ¥'),
                 currentAccountPicture: new CircleAvatar(
-                  backgroundImage: new NetworkImage(user.avatar != null ? user.avatar : ''),
+                  backgroundImage: new CachedNetworkImageProvider(user.avatar),
                 ),
                 otherAccountsPictures: <Widget>[
                   IconButton(
@@ -38,7 +39,7 @@ class HomeDrawer extends StatelessWidget {
               ),
             ],
           ),
-          new Positioned(
+          Positioned(
             child: Container(
               child: new ListTile(
                 title: new Text('Logout from AvisManga', style: TextStyle(color: Colors.white)),
@@ -49,7 +50,6 @@ class HomeDrawer extends StatelessWidget {
               decoration:  new BoxDecoration(color: Theme.of(context).primaryColor),
             ),
             bottom: 0,
-            height: 60,
             width: 305,
           )
         ],

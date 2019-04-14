@@ -10,7 +10,9 @@ class MyApp extends StatelessWidget {
       title: 'Avis Manga',
       theme: new ThemeData(
         primarySwatch:themeColor,
-        primaryColor:themeColor
+        primaryColor:themeColor,
+        primaryTextTheme: themeText,
+        buttonTheme: themeButton
       ),
       routes: routes,
       initialRoute: "/",
@@ -32,4 +34,13 @@ const MaterialColor themeColor = const MaterialColor(
     800: const Color(0xFF283593),
     900: const Color(0xFF283593),
   }
+);
+
+const TextTheme themeText = const TextTheme(
+
+);
+
+const ButtonThemeData themeButton = const ButtonThemeData(
+  splashColor: themeColor,
+  shape: CircleBorder(),
 );
