@@ -92,6 +92,7 @@ class _HomePageState extends State<HomePage> {
         drawer: HomeDrawer(this.user),
         body: _children[_currentIndex],
         floatingActionButton: new FloatingActionButton(
+          backgroundColor: Theme.of(context).primaryColor,
           onPressed: () => print("Pressed"),
           tooltip: 'Search',
           child: new Icon(Icons.search),

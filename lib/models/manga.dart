@@ -14,6 +14,7 @@ class MangaMetadata {
   double rating;
   MangaStatus status;
   List tags;
+  Map author;
 
   MangaMetadata(
       {this.title,
@@ -23,7 +24,8 @@ class MangaMetadata {
       this.nbChap,
       this.rating,
       this.status,
-      this.tags});
+      this.tags,
+      this.author});
 
   MangaMetadata.fromMap(Map<String, dynamic> data) {
     this.title = data["title"];
@@ -34,6 +36,7 @@ class MangaMetadata {
     this.rating = data["rating"];
     this.status = MangaStatus.values[data["status"]];
     this.tags = data["tags"];
+    this.author = data["author"];
   }
 
   Map<String, dynamic> toMap() {
@@ -45,6 +48,7 @@ class MangaMetadata {
     result["nb_chap"] = this.nbChap;
     result["status"] = this.status.index;
     result["tags"] = this.tags;
+    result["author"] = this.author;
     return result;
   }
 }

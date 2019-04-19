@@ -37,7 +37,9 @@ const MaterialColor themeColor = const MaterialColor(
 );
 
 const TextTheme themeText = const TextTheme(
-
+  button: TextStyle(
+    color: Colors.white
+  )
 );
 
 const ButtonThemeData themeButton = const ButtonThemeData(
