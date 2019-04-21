@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 const String mangaCollection = "Manga";
+const String chaptersCollection = "chapters";
+
 const String userCollection = "User";
 
 class Database {
@@ -21,7 +23,7 @@ class Database {
   // Authentification
 
   Future<User> currentUser() {
-    return _auth.currentUser.then(_queryUser);
+    return _auth.currentUser().then(_queryUser);
   }
 
   Future<User> _queryUser(FirebaseUser user) {
@@ -88,6 +90,7 @@ class Database {
   Future<List<MangaMetadata>> listMangas() async {
     return _db.collection(mangaCollection).getDocuments().then((query) {
       return query.documents.map((doc) {
+        doc.data['id'] = doc.documentID;
         return MangaMetadata.fromMap(doc.data);
       }).toList();
     });
@@ -99,6 +102,15 @@ class Database {
         return Future.error("missing data");
       }
       return MangaMetadata.fromMap(doc.data);
+    });
+  }
+
+  Future<MangaMetadata> getChapters(MangaMetadata manga, String title) async {
+    return _db.collection(mangaCollection).document(title).collection(chaptersCollection).getDocuments().then((query) {
+      manga.chapters = query.documents.map((doc) {
+        return doc.data;
+      }).toList();
+      return manga;
     });
   }
 

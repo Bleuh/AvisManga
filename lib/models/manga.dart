@@ -6,6 +6,7 @@ enum MangaStatus {
 }
 
 class MangaMetadata {
+  String id;
   String title;
   String description;
   String mainImage;
@@ -15,9 +16,11 @@ class MangaMetadata {
   MangaStatus status;
   List tags;
   Map author;
+  List<dynamic> chapters;
 
   MangaMetadata(
-      {this.title,
+      {this.id,
+      this.title,
       this.description,
       this.mainImage,
       this.coverImage,
@@ -25,9 +28,11 @@ class MangaMetadata {
       this.rating,
       this.status,
       this.tags,
-      this.author});
+      this.author,
+      this.chapters});
 
   MangaMetadata.fromMap(Map<String, dynamic> data) {
+    this.id = data["id"];
     this.title = data["title"];
     this.description = data["description"];
     this.mainImage = data["main_image"];
@@ -37,10 +42,12 @@ class MangaMetadata {
     this.status = MangaStatus.values[data["status"]];
     this.tags = data["tags"];
     this.author = data["author"];
+    this.chapters = [];
   }
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> result = new Map();
+    result["id"] = this.id;
     result["title"] = this.title;
     result["description"] = this.description;
     result["main_image"] = this.mainImage;
