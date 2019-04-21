@@ -21,7 +21,7 @@ class Database {
   // Authentification
 
   Future<User> currentUser() {
-    return _auth.currentUser.then(_queryUser);
+    return _auth.currentUser().then(_queryUser);
   }
 
   Future<User> _queryUser(FirebaseUser user) {
