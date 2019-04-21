@@ -65,11 +65,12 @@ class Database {
   Future<User> googleSignIn() async {
     return _googleSignIn.signIn().then((user) {
       return user.authentication.then((auth) {
+        final AuthCredential credential = GoogleAuthProvider.getCredential(
+          accessToken: auth.accessToken,
+          idToken: auth.idToken,
+        );
         return _auth
-            .signInWithGoogle(
-              accessToken: auth.accessToken,
-              idToken: auth.idToken,
-            )
+            .signInWithCredential(credential)
             .then((user) => _queryUser(user));
       });
     });
