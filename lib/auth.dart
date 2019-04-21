@@ -1,7 +1,6 @@
 import 'package:avis_manga/data/db.dart';
 import 'package:avis_manga/data/error.dart';
 import 'package:avis_manga/models/user.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 class AuthListener {
@@ -17,7 +16,6 @@ class Auth {
   static final Auth _instance = new Auth.internal();
 
   static final Database db = Database.instance;
-  static SharedPreferences prefs;
 
   User currentUser;
   String userId;
@@ -37,25 +35,18 @@ class Auth {
       return _instance;
     }
     _instance.inited = true;
-    return SharedPreferences.getInstance()
-        .then((SharedPreferences preferences) {
-      prefs = preferences;
-      _instance.initState();
-    }).then((_) => _instance);
+    return _instance.initState().then((_) => _instance);
   }
 
-  void initState() {
+  Future<void> initState() async {
     logged = false;
-    userId = prefs.getString('userId');
 
-    if (currentUser != null && currentUser.uid == userId) {
-      logged = true;
-    } else if (userId != null) {
-      db.queryUserFromUid(userId).then((user) {
+    return db.currentUser().then((user) {
+      if (user != null) {
         this.currentUser = user;
-        logged = true;
-      });
-    }
+        this.logged = true;
+      }
+    });
   }
 
   void subscribe(AuthListener listener) {
@@ -104,7 +95,6 @@ class Auth {
 
   void _loggedUser(User user) {
     currentUser = user;
-    prefs.setString('userId', user.uid);
     logged = true;
     this.notifyLogin(user);
   }
@@ -126,7 +116,6 @@ class Auth {
   void doLogout() {
     db.signOut().then((_) {
       logged = false;
-      prefs.remove('userId');
       this.notifyLogout();
     });
   }

@@ -20,13 +20,26 @@ class Database {
 
   // Authentification
 
+  Future<User> currentUser() {
+    return _auth.currentUser.then(_queryUser);
+  }
+
   Future<User> _queryUser(FirebaseUser user) {
+    if (user == null) {
+      return null;
+    }
     DocumentReference doc = _db.collection(userCollection).document(user.uid);
     return doc.get().then((userDoc) {
       if (userDoc.exists) {
         return User.fromMap(userDoc.data);
       }
-      return doc.setData({"uid": user.uid, "avatar": user.photoUrl, "name": user.displayName, "email": user.email}).then((_) => User(user.uid, user.photoUrl, user.displayName, user.email, 0));
+      return doc.setData({
+        "uid": user.uid,
+        "avatar": user.photoUrl,
+        "name": user.displayName,
+        "email": user.email
+      }).then((_) =>
+          User(user.uid, user.photoUrl, user.displayName, user.email, 0));
     });
   }
 
@@ -35,8 +48,7 @@ class Database {
     return doc.get().then((userDoc) {
       if (userDoc.exists) {
         return User.fromMap(userDoc.data);
-      }
-      else {
+      } else {
         return null;
       }
     });
