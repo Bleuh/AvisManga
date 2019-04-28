@@ -26,6 +26,16 @@ class Database {
     return _auth.currentUser().then(_queryUser);
   }
 
+  Future<void> updateUser(User user) {
+    DocumentReference doc = _db.collection(userCollection).document(user.uid);
+    return doc.updateData({
+      'avatar': user.avatar,
+      'email': user.email,
+      'name': user.name,
+      'wallet': user.wallet
+    });
+  }
+
   Future<User> _queryUser(FirebaseUser user) {
     if (user == null) {
       return null;

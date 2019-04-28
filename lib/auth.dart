@@ -18,7 +18,6 @@ class Auth {
   static final Database db = Database.instance;
 
   User currentUser;
-  String userId;
   bool logged = false;
   bool inited = false;
 
@@ -87,6 +86,10 @@ class Auth {
 
   bool isLogged() {
     return logged;
+  }
+
+  void setUser(User user) {
+    currentUser = user;
   }
 
   void doSignUp(String email, String password) {
