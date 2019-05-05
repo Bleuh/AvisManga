@@ -1,6 +1,7 @@
 import 'package:avis_manga/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:avis_manga/views/partials/previews/manga_card.dart';
+import 'package:avis_manga/data/db.dart';
 import 'package:avis_manga/views/partials/previews/favorite_card.dart';
 import 'package:avis_manga/models/manga.dart';
 import 'package:avis_manga/models/user.dart';
@@ -21,9 +22,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   List<Widget> _children;
-  List<PopupMenuItem<String>> _options;
+  PopupMenuButton<String> popupmenuHome;
+  PopupMenuButton<String> popupmenuFav;
+  PopupMenuButton<String> popupmenu;
+  List<Widget> favorites;
 
   bool friendFilter = false;
+  bool display = false;
 
   AuthListener _listener;
 
@@ -36,24 +41,49 @@ class _HomePageState extends State<HomePage> {
       return MangaCard(meta);
     }).toList();
 
-    var widgetsFavorites = this.widget.data.map((meta) {
-      return FavoriteCard(meta);
-    }).toList();
+    favorites = [];
 
-    _options = [
-      new PopupMenuItem<String> (
-        value: 'friend_only',
-        child: new SwitchListTile(
-            value: friendFilter,
-            onChanged: (_) => print('change'),
-            title: new Text('View only friends'),
-        )
-      )
-    ];
+    popupmenuHome = PopupMenuButton<String>(
+      itemBuilder: (BuildContext context) {
+        return [
+          new PopupMenuItem<String> (
+            value: 'friend_only',
+            child: new SwitchListTile(
+              value: friendFilter,
+              onChanged: (value) => setState((){friendFilter = value;}),
+              title: new Text('View only friends'),
+            )
+          ),
+        ];
+      },
+    );
+
+    popupmenuFav = PopupMenuButton<String>(
+      itemBuilder: (BuildContext context) {
+        return [
+          new PopupMenuItem<String> (
+            value: 'display',
+            child: new CheckboxListTile(
+                value: display,
+                onChanged: (value) {
+                  _children.insert(1, Favorites(favorites, value));
+                  setState((){
+                    _children = _children;
+                    display = value;
+                  });
+                },
+                title: new Text('Display per 3'),
+            )
+          )
+        ];
+      },
+    );
+
+    popupmenu = popupmenuHome;
 
     _children = [
       Feed(widgets),
-      Favorites(widgetsFavorites),
+      Favorites(favorites, display),
       Feed(widgets) // waiting other page
     ];
   }
@@ -71,6 +101,28 @@ class _HomePageState extends State<HomePage> {
   void onTabTapped(int index) {
     setState(() {
       _currentIndex = index;
+      switch (index) {
+        case 0:
+          popupmenu = popupmenuHome;
+          break;
+        case 1:
+          Database.instance.listMangas(ids: user.favorites).then((List<MangaMetadata> data) {
+            List<FavoriteCard> favoritesList = data.map((meta) {
+              return FavoriteCard(meta);
+            }).toList();
+
+            _children.insert(1, Favorites(favoritesList, display));
+            setState(() {
+              favorites = favoritesList;
+              _children = _children;
+            });
+          });
+          popupmenu = popupmenuFav;
+          break;
+        default:
+         popupmenu = null;
+
+      }
     });
   }
 
@@ -81,13 +133,7 @@ class _HomePageState extends State<HomePage> {
       child: new Scaffold(
         appBar: new AppBar(
           title: new Text(widget.title),
-          actions: <Widget>[
-            PopupMenuButton<String>(
-              itemBuilder: (BuildContext context) {
-                return _options;
-              },
-            )
-          ],
+          actions: popupmenu != null ? <Widget>[popupmenu] : <Widget>[],
         ),
         drawer: HomeDrawer(this.user),
         body: _children[_currentIndex],

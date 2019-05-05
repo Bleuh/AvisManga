@@ -32,7 +32,8 @@ class Database {
       'avatar': user.avatar,
       'email': user.email,
       'name': user.name,
-      'wallet': user.wallet
+      'wallet': user.wallet,
+      'favorites': user.favorites
     });
   }
 
@@ -51,7 +52,7 @@ class Database {
         "name": user.displayName,
         "email": user.email
       }).then((_) =>
-          User(user.uid, user.photoUrl, user.displayName, user.email, 0));
+          User(user.uid, user.photoUrl, user.displayName, user.email, 0, []));
     });
   }
 
@@ -97,13 +98,22 @@ class Database {
   }
 
   // Manga
-
-  Future<List<MangaMetadata>> listMangas() async {
+  static const List<dynamic> defaultIds = null;
+  Future<List<MangaMetadata>> listMangas({List<dynamic> ids = defaultIds}) async {
     return _db.collection(mangaCollection).getDocuments().then((query) {
-      return query.documents.map((doc) {
+      List<MangaMetadata> mangas = [];
+      query.documents.forEach((doc) {
         doc.data['id'] = doc.documentID;
-        return MangaMetadata.fromMap(doc.data);
-      }).toList();
+        if (ids != null) {
+          if (ids.indexOf(doc.documentID) != -1) {
+            mangas.add(MangaMetadata.fromMap(doc.data));
+          }
+        }
+        else {
+          mangas.add(MangaMetadata.fromMap(doc.data));
+        }
+      });
+      return mangas;
     });
   }
 

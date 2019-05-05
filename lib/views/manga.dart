@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:avis_manga/models/manga.dart';
 import 'package:avis_manga/data/db.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:avis_manga/auth.dart';
 
 class MangaPage extends StatefulWidget {
   MangaPage({Key key, @required this.manga}) : super(key: key);
@@ -13,12 +14,14 @@ class MangaPage extends StatefulWidget {
 }
 
 class _MangaPageState extends State<MangaPage> {
+  final scaffoldKey = new GlobalKey<ScaffoldState>();
 
   bool titleScrolled = false;
   double bgHeight = 150.0;
   double headOpacity = 0.0;
   ScrollController controller;
   List chapters = [];
+  bool isFav = false;
 
   Future _loadChapters() async {
     Database.instance.getChapters(widget.manga, widget.manga.id).then((manga) =>
@@ -31,10 +34,13 @@ class _MangaPageState extends State<MangaPage> {
 
   @override
   void initState() {
+    super.initState();
+    Auth.instance.then((Auth auth) {
+      isFav = auth.currentUser.favorites.contains(widget.manga.id);
+    });
     chapters = widget.manga.chapters;
     controller = ScrollController();
     controller.addListener(onScroll);
-    super.initState();
 
     if (chapters.isEmpty) {
       _loadChapters();
@@ -57,6 +63,7 @@ class _MangaPageState extends State<MangaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       body: Container(
         color: Theme.of(context).primaryColor,
         child: Stack(
@@ -182,12 +189,25 @@ class _MangaPageState extends State<MangaPage> {
                             Expanded(
                               child: FlatButton(
                                 onPressed: () {
-                                  Navigator.of(context).pop();
+                                  Auth.instance.then((auth){
+                                    var user = auth.currentUser;
+                                    var newFav = new List<String>.from(user.favorites);
+                                    if (isFav) {
+                                      newFav.remove(widget.manga.id);
+                                    } else {
+                                      newFav.add(widget.manga.id);
+                                    }
+                                    user.favorites = newFav;
+                                    setState(() {
+                                      isFav = !isFav;
+                                    });
+                                    Auth.db.updateUser(user).then((_) => _showSnackBar(isFav ? 'Favorie ajouter' : 'Favorie retirer'));
+                                  });
                                 },
                                 child: Column(
                                   children: <Widget>[
-                                    Icon(Icons.favorite, size: 30.0, color: Colors.white),
-                                    Text("Ajouter aux favoris", style: Theme.of(context).primaryTextTheme.button,)
+                                    Icon(isFav ? Icons.favorite : Icons.favorite_border, size: 30.0, color: Colors.white),
+                                    Text(isFav ? "- Favoris" : "+ Favoris", style: Theme.of(context).primaryTextTheme.button,)
                                   ],
                                 )
                               ),
@@ -348,6 +368,11 @@ class _MangaPageState extends State<MangaPage> {
         ),
       ),
     );
+  }
+
+  void _showSnackBar(String text) {
+    scaffoldKey.currentState
+        .showSnackBar(new SnackBar(content: new Text(text)));
   }
 
 }

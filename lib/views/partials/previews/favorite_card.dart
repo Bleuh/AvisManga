@@ -1,6 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:avis_manga/models/manga.dart';
-import 'package:avis_manga/views/partials/icon_star.dart';
+import 'package:avis_manga/views/manga.dart';
 
 class FavoriteCard extends StatelessWidget {
   final MangaMetadata meta;
@@ -9,87 +10,40 @@ class FavoriteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Column(
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Container(
-                child: Image.network(
-                  this.meta.mainImage,
-                ),
-                constraints: BoxConstraints(maxHeight: 200.0, maxWidth: 200.0),
-                padding: EdgeInsets.all(5.0),
-              ),
-              Expanded(
-                child: Container(
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        child: Text(
-                          this.meta.title,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16.0),
-                          textAlign: TextAlign.left,
-                        ),
-                        padding: EdgeInsets.only(left:5.0, top:5.0, bottom: 2.0),
-                        alignment: Alignment.bottomLeft,
-                      ),
-                      Container(
-                        child: Text(
-                          this.meta.nbChap.toString() + " chapitres",
-                          textAlign: TextAlign.left,
-                        ),
-                        padding: EdgeInsets.only(left: 5.0, bottom: 5.0),
-                      ),
-                      Row(
-                          children: [0, 1, 2, 3, 4].map((index) {
-                        return IconStar(
-                            color: Colors.black,
-                            index: index,
-                            rating: this.meta.rating);
-                      }).toList()),
-                      Container(
-                        height: 35.0,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                            children: this.meta.tags.map((name) {
-                          return Container(
-                            child: Chip(
-                              label: Text(name),
-                            ),
-                            padding: EdgeInsets.only(right: 10.0),
-                          );
-                        }).toList()),
-                      ),
-                      Expanded(
-                        child: Container(
-                          child: Text(
-                            this.meta.description,
-                            textAlign: TextAlign.left,
-                            overflow: TextOverflow.fade,
-                            softWrap: true,
-                            maxLines: 3,
-                          ),
-                          padding: EdgeInsets.all(10.0),
-                        ),
-                      ),
-                    ],
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                  ),
-                  height: 200.0,
-                  padding: EdgeInsets.all(5.0),
-                  alignment: Alignment.topLeft,
-                ),
-              )
-            ],
+    return GestureDetector(
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.grey,
+            width: 0.5,
+            style: BorderStyle.solid,
           ),
-        ],
-        mainAxisAlignment: MainAxisAlignment.start,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey,
+              blurRadius: 10.0,
+              spreadRadius: 1.0,
+              offset: Offset(
+                0.0, // horizontal, move right 10
+                5.0, // vertical, move down 10
+              ),
+            )
+          ],
+        ),
+        child: CachedNetworkImage(
+          imageUrl: this.meta.coverImage,
+          placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+          errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+          fit: BoxFit.cover,
+        ),
       ),
-      margin: EdgeInsets.all(10.0),
+      onTap: () {
+        Navigator.push(context,
+          new MaterialPageRoute(
+            builder: (BuildContext context) => new MangaPage(manga: this.meta)
+          )
+        );
+      },
     );
   }
 }

@@ -22,6 +22,7 @@ class MangaCard extends StatelessWidget {
                     imageUrl: this.meta.coverImage,
                     placeholder: (context, url) => Center(child: CircularProgressIndicator()),
                     errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+                    fit: BoxFit.cover,
                   ),
                   height: 200.0,
                   width: 140.0,
