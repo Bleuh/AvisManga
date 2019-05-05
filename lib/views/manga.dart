@@ -24,7 +24,7 @@ class _MangaPageState extends State<MangaPage> {
   bool isFav = false;
 
   Future _loadChapters() async {
-    Database.instance.getChapters(widget.manga, widget.manga.id).then((manga) =>
+    Database.instance.getChapters(widget.manga).then((manga) =>
       setState(() {
         widget.manga = manga;
         chapters = widget.manga.chapters;

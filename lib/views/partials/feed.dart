@@ -7,11 +7,8 @@ class Feed extends StatelessWidget {
 
  @override
  Widget build(BuildContext context) {
-    return Center(
-      // Center is a layout widget. It takes a single child and positions it
-      // in the middle of the parent.
-      child: new Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+    return Container(
+      child: ListView(
         children: widgets,
       ),
     );

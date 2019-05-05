@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:avis_manga/models/manga.dart';
 import 'package:avis_manga/models/user.dart';
+import 'package:avis_manga/models/comment.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 const String mangaCollection = "Manga";
 const String chaptersCollection = "chapters";
+const String commentsCollection = "comments";
 
 const String userCollection = "User";
 
@@ -113,23 +115,43 @@ class Database {
           mangas.add(MangaMetadata.fromMap(doc.data));
         }
       });
-      return mangas;
+      var futures = <Future>[];
+      mangas.forEach((manga){
+        futures.add(getComments(manga));
+      });
+      mangas = [];
+      return Future.wait(futures).then((results){
+        results.forEach((manga){
+          mangas.add(manga);
+        });
+        return mangas;
+      });
     });
   }
 
-  Future<MangaMetadata> getManga(String title) async {
-    return _db.collection(mangaCollection).document(title).get().then((doc) {
+  Future<MangaMetadata> getManga(String uid) async {
+    return _db.collection(mangaCollection).document(uid).get().then((doc) {
       if (!doc.exists) {
         return Future.error("missing data");
       }
-      return MangaMetadata.fromMap(doc.data);
+      MangaMetadata manga =  MangaMetadata.fromMap(doc.data);
+      return getComments(manga).then((manga) => manga);
     });
   }
 
-  Future<MangaMetadata> getChapters(MangaMetadata manga, String title) async {
-    return _db.collection(mangaCollection).document(title).collection(chaptersCollection).getDocuments().then((query) {
+  Future<MangaMetadata> getChapters(MangaMetadata manga) async {
+    return _db.collection(mangaCollection).document(manga.id).collection(chaptersCollection).getDocuments().then((query) {
       manga.chapters = query.documents.map((doc) {
         return doc.data;
+      }).toList();
+      return manga;
+    });
+  }
+
+  Future<MangaMetadata> getComments(MangaMetadata manga) async {
+    return _db.collection(mangaCollection).document(manga.id).collection(commentsCollection).orderBy('score', descending: true).getDocuments().then((query) {
+      manga.comments = query.documents.map((doc) {
+        return Comment.fromMap(doc.data);
       }).toList();
       return manga;
     });
@@ -138,11 +160,11 @@ class Database {
   Future<void> insertManga(MangaMetadata manga) async {
     return _db
         .collection(mangaCollection)
-        .document(manga.title)
+        .document(manga.id)
         .setData(manga.toMap());
   }
 
-  Future<void> deleteManga(String title) async {
-    return _db.collection(mangaCollection).document(title).delete();
+  Future<void> deleteManga(String uid) async {
+    return _db.collection(mangaCollection).document(uid).delete();
   }
 }

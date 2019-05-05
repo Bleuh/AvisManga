@@ -1,3 +1,5 @@
+import 'package:avis_manga/models/comment.dart';
+
 enum MangaStatus {
   Dropped,
   Pending,
@@ -17,6 +19,8 @@ class MangaMetadata {
   List tags;
   Map author;
   List<dynamic> chapters;
+  List images;
+  List<Comment> comments;
 
   MangaMetadata(
       {this.id,
@@ -29,7 +33,9 @@ class MangaMetadata {
       this.status,
       this.tags,
       this.author,
-      this.chapters});
+      this.chapters,
+      this.images,
+      this.comments});
 
   MangaMetadata.fromMap(Map<String, dynamic> data) {
     this.id = data["id"];
@@ -43,6 +49,8 @@ class MangaMetadata {
     this.tags = data["tags"];
     this.author = data["author"];
     this.chapters = [];
+    this.images = data["images"];
+    this.comments = [];
   }
 
   Map<String, dynamic> toMap() {
@@ -56,6 +64,7 @@ class MangaMetadata {
     result["status"] = this.status.index;
     result["tags"] = this.tags;
     result["author"] = this.author;
+    result["images"] = this.images;
     return result;
   }
 }

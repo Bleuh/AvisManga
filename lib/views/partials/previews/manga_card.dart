@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:avis_manga/models/manga.dart';
 import 'package:avis_manga/views/manga.dart';
 import 'package:avis_manga/views/partials/icon_star.dart';
+import 'package:avis_manga/views/partials/components/comment_row.dart';
 
 class MangaCard extends StatelessWidget {
   final MangaMetadata meta;
@@ -11,11 +12,11 @@ class MangaCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      child: Card(
-        child: Column(
-          children: <Widget>[
-            Row(
+    return Card(
+      child: Column(
+        children: <Widget>[
+          GestureDetector(
+            child: Row(
               children: <Widget>[
                 Container(
                   child: CachedNetworkImage(
@@ -92,21 +93,43 @@ class MangaCard extends StatelessWidget {
                     padding: EdgeInsets.all(5.0),
                     alignment: Alignment.topLeft,
                   ),
-                )
+                ),
               ],
             ),
-          ],
-          mainAxisAlignment: MainAxisAlignment.start,
-        ),
-        margin: EdgeInsets.all(10.0),
-      ),
-      onTap: () {
-        Navigator.push(context,
-          new MaterialPageRoute(
-            builder: (BuildContext context) => new MangaPage(manga: this.meta)
+            onTap: () {
+              Navigator.push(context,
+                new MaterialPageRoute(
+                  builder: (BuildContext context) => new MangaPage(manga: this.meta)
+                )
+              );
+            },
+          ),
+          ExpansionTile(
+            title: Row(
+              children: <Widget>[
+                  Text(meta.comments.length.toString() + ' commentaires...'),
+              ] + meta.comments.map((comment) {
+                return Container(
+                  margin: EdgeInsets.only(left: 10.0),
+                  child: ClipOval(
+                    child: Image(
+                      height: 25.0,
+                      width: 25.0,
+                      image: CachedNetworkImageProvider(comment.user.avatar),
+                      fit: BoxFit.cover
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+            children: meta.comments.map((comment) {
+              return CommentRow(comment);
+            }).toList()
           )
-        );
-      },
+        ],
+        mainAxisAlignment: MainAxisAlignment.start,
+      ),
+      margin: EdgeInsets.all(10.0),
     );
   }
 }
