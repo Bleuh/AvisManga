@@ -18,7 +18,7 @@ class Database {
   static Firestore _db = Firestore.instance;
   static GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  static get instance => _instance;
+  static Database get instance => _instance;
 
   Database._internal();
 
@@ -101,7 +101,8 @@ class Database {
 
   // Manga
   static const List<dynamic> defaultIds = null;
-  Future<List<MangaMetadata>> listMangas({List<dynamic> ids = defaultIds}) async {
+  Future<List<MangaMetadata>> listMangas(
+      {List<dynamic> ids = defaultIds}) async {
     return _db.collection(mangaCollection).getDocuments().then((query) {
       List<MangaMetadata> mangas = [];
       query.documents.forEach((doc) {
@@ -110,18 +111,17 @@ class Database {
           if (ids.indexOf(doc.documentID) != -1) {
             mangas.add(MangaMetadata.fromMap(doc.data));
           }
-        }
-        else {
+        } else {
           mangas.add(MangaMetadata.fromMap(doc.data));
         }
       });
       var futures = <Future>[];
-      mangas.forEach((manga){
+      mangas.forEach((manga) {
         futures.add(getComments(manga));
       });
       mangas = [];
-      return Future.wait(futures).then((results){
-        results.forEach((manga){
+      return Future.wait(futures).then((results) {
+        results.forEach((manga) {
           mangas.add(manga);
         });
         return mangas;
@@ -134,22 +134,33 @@ class Database {
       if (!doc.exists) {
         return Future.error("missing data");
       }
-      MangaMetadata manga =  MangaMetadata.fromMap(doc.data);
+      MangaMetadata manga = MangaMetadata.fromMap(doc.data);
       return getComments(manga).then((manga) => manga);
     });
   }
 
   Future<MangaMetadata> getChapters(MangaMetadata manga) async {
-    return _db.collection(mangaCollection).document(manga.id).collection(chaptersCollection).getDocuments().then((query) {
+    return _db
+        .collection(mangaCollection)
+        .document(manga.id)
+        .collection(chaptersCollection)
+        .getDocuments()
+        .then((query) {
       manga.chapters = query.documents.map((doc) {
-        return doc.data;
+        return MangaChapter.fromMap(doc.data);
       }).toList();
       return manga;
     });
   }
 
   Future<MangaMetadata> getComments(MangaMetadata manga) async {
-    return _db.collection(mangaCollection).document(manga.id).collection(commentsCollection).orderBy('score', descending: true).getDocuments().then((query) {
+    return _db
+        .collection(mangaCollection)
+        .document(manga.id)
+        .collection(commentsCollection)
+        .orderBy('score', descending: true)
+        .getDocuments()
+        .then((query) {
       manga.comments = query.documents.map((doc) {
         return Comment.fromMap(doc.data);
       }).toList();

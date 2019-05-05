@@ -7,6 +7,20 @@ enum MangaStatus {
   Complete,
 }
 
+class MangaChapter {
+  String url;
+
+  MangaChapter.fromMap(Map<String, dynamic> data) {
+    this.url = data["url"];
+  }
+
+  Map<String, dynamic> toMap() {
+    Map<String, dynamic> result = new Map();
+    result["url"] = this.url;
+    return result;
+  }
+}
+
 class MangaMetadata {
   String id;
   String title;
@@ -18,7 +32,7 @@ class MangaMetadata {
   MangaStatus status;
   List tags;
   Map author;
-  List<dynamic> chapters;
+  List<MangaChapter> chapters;
   List images;
   List<Comment> comments;
 
