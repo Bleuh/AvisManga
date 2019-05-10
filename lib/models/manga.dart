@@ -1,4 +1,5 @@
 import 'package:avis_manga/models/comment.dart';
+import 'package:avis_manga/models/author.dart';
 
 enum MangaStatus {
   Dropped,
@@ -31,7 +32,7 @@ class MangaMetadata {
   double rating;
   MangaStatus status;
   List tags;
-  Map author;
+  Author author;
   List<MangaChapter> chapters;
   List images;
   List<Comment> comments;
@@ -61,10 +62,29 @@ class MangaMetadata {
     this.rating = data["rating"];
     this.status = MangaStatus.values[data["status"]];
     this.tags = data["tags"];
-    this.author = data["author"];
+    this.author = Author.fromMap(new Map<String, dynamic>.from(data["author"]));
     this.chapters = [];
     this.images = data["images"];
     this.comments = [];
+  }
+
+  String statusString() {
+    switch (this.status) {
+      case MangaStatus.Airing:
+        return 'En cours';
+        break;
+      case MangaStatus.Complete:
+        return 'Terminé';
+        break;
+      case MangaStatus.Dropped:
+        return 'Abandonné';
+        break;
+      case MangaStatus.Pending:
+        return 'En cours';
+        break;
+      default:
+        return 'Pas d\'informatique';
+    }
   }
 
   Map<String, dynamic> toMap() {

@@ -5,6 +5,7 @@ class User {
   String email;
   int wallet;
   List<dynamic> favorites;
+  List<dynamic> ownManga;
 
   User(
     this.uid,
@@ -12,7 +13,8 @@ class User {
     this.name,
     this.email,
     this.wallet,
-    this.favorites
+    this.favorites,
+    this.ownManga
   );
 
   User.fromMap(Map<String, dynamic> m) {
@@ -22,5 +24,6 @@ class User {
     this.email = m["email"];
     this.wallet = m["wallet"];
     this.favorites = m["favorites"];
+    this.ownManga = m["own_manga"];
   }
 }

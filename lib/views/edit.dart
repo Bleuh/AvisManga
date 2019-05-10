@@ -287,9 +287,9 @@ class _EditPageState extends State<EditPage> {
                 onPressed: () {
                   if (codeFormKey.currentState.validate()) {
                     widget.user.wallet += 20;
+                    Auth.instance.then((auth) => auth.setUser(widget.user));
                     Database.instance.updateUser(widget.user).then((_) {
                       _showSnackBar('20 ¥ ajouter sur votre compte !');
-                      Auth.instance.then((auth) => auth.setUser(widget.user));
                     });
                   }
                 },

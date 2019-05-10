@@ -108,7 +108,7 @@ class MangaCard extends StatelessWidget {
             title: Row(
               children: <Widget>[
                   Text(meta.comments.length.toString() + ' commentaires...'),
-              ] + meta.comments.map((comment) {
+              ] + meta.comments.take(3).map((comment) {
                 return Container(
                   margin: EdgeInsets.only(left: 10.0),
                   child: ClipOval(
@@ -122,7 +122,7 @@ class MangaCard extends StatelessWidget {
                 );
               }).toList(),
             ),
-            children: meta.comments.map((comment) {
+            children: meta.comments.take(3).map((comment) {
               return CommentRow(comment);
             }).toList()
           )

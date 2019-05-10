@@ -35,7 +35,8 @@ class Database {
       'email': user.email,
       'name': user.name,
       'wallet': user.wallet,
-      'favorites': user.favorites
+      'favorites': user.favorites,
+      'own_manga': user.ownManga
     });
   }
 
@@ -54,7 +55,7 @@ class Database {
         "name": user.displayName,
         "email": user.email
       }).then((_) =>
-          User(user.uid, user.photoUrl, user.displayName, user.email, 0, []));
+          User(user.uid, user.photoUrl, user.displayName, user.email, 0, [], []));
     });
   }
 
@@ -173,6 +174,18 @@ class Database {
         .collection(mangaCollection)
         .document(manga.id)
         .setData(manga.toMap());
+  }
+
+  Future<Comment> insertComment(MangaMetadata manga, User user, String commentText) async {
+    Comment comment = new Comment(null, commentText, DateTime.now(), user, 0);
+    return _db
+        .collection(mangaCollection)
+        .document(manga.id)
+        .collection(commentsCollection)
+        .add(comment.toMap()).then((newComment){
+          comment.uid = newComment.documentID;
+          return comment;
+        });
   }
 
   Future<void> deleteManga(String uid) async {

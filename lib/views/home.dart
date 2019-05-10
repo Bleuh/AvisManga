@@ -1,8 +1,6 @@
 import 'package:avis_manga/auth.dart';
 import 'package:flutter/material.dart';
-import 'package:avis_manga/views/partials/previews/manga_card.dart';
 import 'package:avis_manga/data/db.dart';
-import 'package:avis_manga/views/partials/previews/favorite_card.dart';
 import 'package:avis_manga/models/manga.dart';
 import 'package:avis_manga/models/user.dart';
 import 'package:avis_manga/views/partials/feed.dart';
@@ -22,10 +20,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   List<Widget> _children;
+
   PopupMenuButton<String> popupmenuHome;
   PopupMenuButton<String> popupmenuFav;
+
   PopupMenuButton<String> popupmenu;
-  List<Widget> favorites;
 
   bool friendFilter = false;
   bool display = false;
@@ -37,11 +36,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    var widgets = this.widget.data.map((meta) {
-      return MangaCard(meta);
-    }).toList();
-
-    favorites = [];
 
     popupmenuHome = PopupMenuButton<String>(
       itemBuilder: (BuildContext context) {
@@ -66,7 +60,8 @@ class _HomePageState extends State<HomePage> {
             child: new CheckboxListTile(
                 value: display,
                 onChanged: (value) {
-                  _children.insert(1, Favorites(favorites, value));
+                  Favorites fav = _children[1];
+                  _children.insert(1, Favorites(fav.mangas, value));
                   setState((){
                     _children = _children;
                     display = value;
@@ -82,9 +77,9 @@ class _HomePageState extends State<HomePage> {
     popupmenu = popupmenuHome;
 
     _children = [
-      Feed(widgets),
-      Favorites(favorites, display),
-      Feed(widgets) // waiting other page
+      Feed(this.widget.data),
+      Favorites([], display),
+      Feed(this.widget.data) // waiting other page
     ];
   }
 
@@ -103,17 +98,18 @@ class _HomePageState extends State<HomePage> {
       _currentIndex = index;
       switch (index) {
         case 0:
+          Database.instance.listMangas().then((List<MangaMetadata>data) {
+            _children.insert(0, Feed(data));
+            setState(() {
+              _children = _children;
+            });
+          });
           popupmenu = popupmenuHome;
           break;
         case 1:
           Database.instance.listMangas(ids: user.favorites).then((List<MangaMetadata> data) {
-            List<FavoriteCard> favoritesList = data.map((meta) {
-              return FavoriteCard(meta);
-            }).toList();
-
-            _children.insert(1, Favorites(favoritesList, display));
+            _children.insert(1, Favorites(data, display));
             setState(() {
-              favorites = favoritesList;
               _children = _children;
             });
           });
@@ -121,7 +117,6 @@ class _HomePageState extends State<HomePage> {
           break;
         default:
          popupmenu = null;
-
       }
     });
   }
@@ -137,12 +132,6 @@ class _HomePageState extends State<HomePage> {
         ),
         drawer: HomeDrawer(this.user),
         body: _children[_currentIndex],
-        floatingActionButton: new FloatingActionButton(
-          backgroundColor: Theme.of(context).primaryColor,
-          onPressed: () => print("Pressed"),
-          tooltip: 'Search',
-          child: new Icon(Icons.search),
-        ),
         bottomNavigationBar: BottomNavigationBar(
           onTap: onTabTapped,
           currentIndex: _currentIndex,
