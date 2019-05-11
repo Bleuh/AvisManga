@@ -5,6 +5,7 @@ import 'package:avis_manga/models/manga.dart';
 import 'package:avis_manga/models/user.dart';
 import 'package:avis_manga/views/partials/feed.dart';
 import 'package:avis_manga/views/partials/favorites.dart';
+import 'package:avis_manga/views/partials/friends_list.dart';
 import 'package:avis_manga/views/partials/home_drawer.dart';
 
 class HomePage extends StatefulWidget {
@@ -79,7 +80,7 @@ class _HomePageState extends State<HomePage> {
     _children = [
       Feed(this.widget.data),
       Favorites([], display),
-      Feed(this.widget.data) // waiting other page
+      FriendsList([]) // waiting other page
     ];
   }
 
@@ -89,6 +90,7 @@ class _HomePageState extends State<HomePage> {
       auth.subscribe(_listener);
       setState(() {
         user = auth.currentUser;
+        _children[2] = FriendsList(auth.currentUser.friends);
       });
     });
   }
@@ -116,6 +118,9 @@ class _HomePageState extends State<HomePage> {
           popupmenu = popupmenuFav;
           break;
         default:
+          setState(() {
+            _children[2] = FriendsList(user.friends);
+          });
          popupmenu = null;
       }
     });

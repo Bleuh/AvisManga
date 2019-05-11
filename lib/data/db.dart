@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:avis_manga/models/manga.dart';
 import 'package:avis_manga/models/user.dart';
 import 'package:avis_manga/models/comment.dart';
+import 'package:avis_manga/models/friend.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -28,15 +29,32 @@ class Database {
     return _auth.currentUser().then(_queryUser);
   }
 
-  Future<void> updateUser(User user) {
+  Future<void> updateUser(User user, {bool hydrate = false}) {
     DocumentReference doc = _db.collection(userCollection).document(user.uid);
+    var futures = <Future>[];
+    //hydrate comments with newUser name
+    if (hydrate) {
+      user.comments.forEach((comment) {
+        comment.user = User.fromMap({
+            'avatar': user.avatar,
+            'name': user.name,
+            'uid': user.uid
+          });
+        futures.add(this.hydrate("$mangaCollection/${comment.mangaUid}/$commentsCollection", comment.uid, comment.toMap()));
+      });
+      Future.wait(futures);
+    }
     return doc.updateData({
       'avatar': user.avatar,
       'email': user.email,
       'name': user.name,
       'wallet': user.wallet,
       'favorites': user.favorites,
-      'own_manga': user.ownManga
+      'own_manga': user.ownManga,
+      'friends': user.friends.map(((f) => f.toMap())).toList(),
+      'comments': user.comments.map(((c) => c.toMap())).toList(),
+      'last_manga_read': user.lastMangaRead,
+      'last_time_read': user.lastTimeRead
     });
   }
 
@@ -55,7 +73,7 @@ class Database {
         "name": user.displayName,
         "email": user.email
       }).then((_) =>
-          User(user.uid, user.photoUrl, user.displayName, user.email, 0, [], []));
+          User(user.uid, user.photoUrl, user.displayName, user.email, 0, [], [], [], [], null, null));
     });
   }
 
@@ -163,6 +181,7 @@ class Database {
         .getDocuments()
         .then((query) {
       manga.comments = query.documents.map((doc) {
+        doc.data['uid'] = doc.documentID;
         return Comment.fromMap(doc.data);
       }).toList();
       return manga;
@@ -177,7 +196,11 @@ class Database {
   }
 
   Future<Comment> insertComment(MangaMetadata manga, User user, String commentText) async {
-    Comment comment = new Comment(null, commentText, DateTime.now(), user, 0);
+    Comment comment = new Comment(null, manga.id, commentText, DateTime.now(), User.fromMap({
+      'avatar': user.avatar,
+      'name': user.name,
+      'uid': user.uid
+    }), 0);
     return _db
         .collection(mangaCollection)
         .document(manga.id)
@@ -186,6 +209,10 @@ class Database {
           comment.uid = newComment.documentID;
           return comment;
         });
+  }
+
+  Future<void> hydrate(path, id, data) async {
+    _db.collection(path).document(id).setData(data);
   }
 
   Future<void> deleteManga(String uid) async {

@@ -11,6 +11,7 @@ class Avatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 70.0,
       child: Column(
         children: <Widget>[
           Container(

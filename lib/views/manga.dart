@@ -62,6 +62,8 @@ class _MangaPageState extends State<MangaPage> {
               Auth.instance.then((auth){
                 Database.instance.insertComment(widget.manga, auth.currentUser, newComment).then((comment){
                   widget.manga.comments.add(comment);
+                  auth.currentUser.comments.add(comment);
+                  Database.instance.updateUser(auth.currentUser);
                   widget.manga.comments.sort((Comment a, Comment b){
                     return - a.score.compareTo(b.score);
                   });

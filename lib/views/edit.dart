@@ -92,11 +92,13 @@ class _EditPageState extends State<EditPage> {
                   shape: CircleBorder(),
                   color: Theme.of(context).primaryColor,
                   onPressed: () {
-                    FilePicker.getFilePath(type: FileType.CUSTOM, fileExtension: 'png').then((path) => {
-                      setState(() {
-                        imageProvider = AssetImage(path);
-                        imagePath = path;
-                      }),
+                    FilePicker.getFilePath(type: FileType.CUSTOM, fileExtension: 'png').then((path){
+                      if(path != null){
+                        setState(() {
+                          imageProvider = AssetImage(path);
+                          imagePath = path;
+                        });
+                      }
                     });
                   },
                   child: Icon(Icons.edit, size: 25.0, color: Colors.white)
@@ -366,7 +368,7 @@ class _EditPageState extends State<EditPage> {
                     Upload.uploadProfilePicture(imagePath).then((url) {
                       widget.user.avatar = url;
                       Auth.instance.then((auth) => auth.setUser(widget.user));
-                      Database.instance.updateUser(widget.user).then((_) {
+                      Database.instance.updateUser(widget.user, hydrate: true).then((_) {
                         _showSnackBar('Profil mis à jour !');
                           setState(() {
                             imagePath = '';
@@ -376,7 +378,7 @@ class _EditPageState extends State<EditPage> {
                   }
                   else {
                     Auth.instance.then((auth) => auth.setUser(widget.user));
-                    Database.instance.updateUser(widget.user).then((_) {
+                    Database.instance.updateUser(widget.user, hydrate: true).then((_) {
                       _showSnackBar('Profil mis à jour !');
                     });
                   }
