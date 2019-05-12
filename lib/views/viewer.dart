@@ -3,6 +3,7 @@ import 'package:file_cache/file_cache.dart';
 import 'package:avis_manga/models/manga.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ViewerPage extends StatefulWidget {
   final MangaMetadata manga;
@@ -22,6 +23,19 @@ class ViewerPageState extends State<ViewerPage>
   double itemWidth;
 
   Future<Archive> chapter;
+
+  bool currentlyDisplay = true;
+
+  void displayAppBar() {
+    if (currentlyDisplay) {
+      SystemChrome.setEnabledSystemUIOverlays([]);
+    } else {
+      SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+    }
+    setState(() {
+      currentlyDisplay = !currentlyDisplay;
+    });
+  }
 
   @override
   void initState() {
@@ -46,42 +60,54 @@ class ViewerPageState extends State<ViewerPage>
   Widget build(BuildContext context) {
     itemWidth = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(this.widget.manga.title),
-      ),
-      body: FutureBuilder(
-          future: chapter,
-          builder: (BuildContext ctx, AsyncSnapshot<Archive> snap) {
-            if (snap.hasData) {
-              print("image loaded");
-              return Container(
-                padding: EdgeInsets.all(0),
-                child: PageView.builder(
-                  itemBuilder: (BuildContext context, int index) {
-                    var file = snap.data[index];
-                    return Image.memory(file.rawContent.toUint8List());
-                  },
-                  scrollDirection: Axis.horizontal,
-                ),
-              );
-            } else {
-              return Container(
-                child: Column(
-                  children: <Widget>[
-                    CircularProgressIndicator(),
-                    new Container(
-                      height: 8.0,
+    return WillPopScope(
+      onWillPop: (){
+        SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+        setState(() {
+          currentlyDisplay = true;
+        });
+        return Future.value(true);
+      },
+      child: Scaffold(
+        appBar: currentlyDisplay ? AppBar(
+          title: Text("${this.widget.manga.title} - chapitre ${this.widget.chapter + 1}"),
+        ) : null,
+        body: GestureDetector(
+          onTap: displayAppBar,
+          child: FutureBuilder(
+              future: chapter,
+              builder: (BuildContext ctx, AsyncSnapshot<Archive> snap) {
+                if (snap.hasData) {
+                  print("image loaded");
+                  return Container(
+                    padding: EdgeInsets.all(0),
+                    child: PageView.builder(
+                      itemBuilder: (BuildContext context, int index) {
+                        var file = snap.data[index];
+                        return Image.memory(file.rawContent.toUint8List());
+                      },
+                      scrollDirection: Axis.horizontal,
                     ),
-                    Text("loading...")
-                  ],
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                ),
-                alignment: Alignment.center,
-              );
-            }
-          }),
+                  );
+                } else {
+                  return Container(
+                    child: Column(
+                      children: <Widget>[
+                        CircularProgressIndicator(),
+                        new Container(
+                          height: 8.0,
+                        ),
+                        Text("loading...")
+                      ],
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                    ),
+                    alignment: Alignment.center,
+                  );
+                }
+              }),
+        ),
+      ),
     );
   }
 

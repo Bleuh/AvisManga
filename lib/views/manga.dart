@@ -4,6 +4,8 @@ import 'package:avis_manga/models/manga.dart';
 import 'package:avis_manga/models/comment.dart';
 import 'package:avis_manga/models/user.dart';
 import 'package:avis_manga/views/viewer.dart';
+import 'package:avis_manga/views/partials/components/chapter.dart';
+import 'package:avis_manga/views/partials/manga_list.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:avis_manga/views/partials/components/comment_row.dart';
 import 'package:flutter/material.dart';
@@ -168,7 +170,11 @@ class _MangaPageState extends State<MangaPage> {
                         Expanded(
                           child: FlatButton(
                             onPressed: () {
-                              Navigator.of(context).pop();
+                              Navigator.of(context).push(
+                                new MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        new ChaptersList(widget.manga))
+                              );
                             },
                             child: Column(
                               children: <Widget>[
@@ -371,21 +377,7 @@ class _MangaPageState extends State<MangaPage> {
                   height: _animatedHeightChapters,
                   child: Wrap(
                       children: widget.manga.chapters
-                          .map((chapter) => FlatButton(
-                                child: Text(
-                                  chapter.key,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).push(
-                                      new MaterialPageRoute(
-                                          builder: (BuildContext context) =>
-                                              new ViewerPage(this.widget.manga,
-                                                  chapter.number - 1)));
-                                },
-                              ))
+                          .map((chapter) => Chapter(widget.manga, chapter))
                           .toList()),
                 ),
                 GestureDetector(
