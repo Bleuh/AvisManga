@@ -17,7 +17,7 @@ class FriendCard extends StatelessWidget {
           Expanded(
             child: Container(
               alignment: Alignment.center,
-              child: Avatar(user)
+              child: Avatar(user, actif: user.lastTimeRead == null)
             ),
             flex: 2,
           ),
@@ -27,17 +27,17 @@ class FriendCard extends StatelessWidget {
               child: Stack(
                 children: <Widget>[
                   Container(
-                    alignment: Alignment.centerLeft,
-                    child: Text("Dermier manga lu ${user.lastMangaRead}")
+                    alignment: Alignment.center,
+                    child: user.lastTimeRead != null ? Text("Dermier manga lu ${user.lastMangaRead}") : Text("Lit actuellement ${user.lastMangaRead}")
                   ),
-                  Positioned(
+                  user.lastTimeRead != null ? Positioned(
                     child: Text(
                       DateFormat('dd/MM/yyyy à kk:mm').format(user.lastTimeRead),
                       style: TextStyle(fontSize: 12.0)
                     ),
                     right: 0.0,
                     bottom: 0.0,
-                  ),
+                  ) : Container(),
                 ],
               )
             ),

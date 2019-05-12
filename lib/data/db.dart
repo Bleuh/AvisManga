@@ -69,11 +69,18 @@ class Database {
       }
       return doc.setData({
         "uid": user.uid,
-        "avatar": user.photoUrl,
+        "avatar": "https://www.autourdelacom.fr/wp-content/uploads/2018/03/default-user-image.png",
         "name": user.displayName,
-        "email": user.email
+        "email": user.email,
+        "wallet": 0,
+        "favorites": [],
+        "ownManga": [],
+        "friends": [],
+        "comments": [],
+        "last_manga_read": '',
+        "last_taime_read": DateTime.now()
       }).then((_) =>
-          User(user.uid, user.photoUrl, user.displayName, user.email, 0, [], [], [], [], null, null));
+          User(user.uid, "https://www.autourdelacom.fr/wp-content/uploads/2018/03/default-user-image.png", user.displayName, user.email, 0, [], [], [], [], null, null));
     });
   }
 
@@ -82,6 +89,16 @@ class Database {
     return doc.get().then((userDoc) {
       if (userDoc.exists) {
         return User.fromMap(userDoc.data);
+      } else {
+        return null;
+      }
+    });
+  }
+
+  Future<User> queryUserFromName(String name) {
+    return _db.collection(userCollection).where('name', isEqualTo: name).limit(1).getDocuments().then((query){
+      if (query.documents.first.exists) {
+        return User.fromMap(query.documents.first.data);
       } else {
         return null;
       }

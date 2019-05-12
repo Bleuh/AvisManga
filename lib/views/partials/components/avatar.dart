@@ -5,8 +5,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 class Avatar extends StatelessWidget {
   final User user;
   final Color textColor;
+  final bool actif;
 
-  Avatar(this.user, {this.textColor});
+  Avatar(this.user, {this.textColor, this.actif = false});
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +29,18 @@ class Avatar extends StatelessWidget {
                     ),
                   ),
                 ),
+                actif ? Positioned(
+                  right: 2.0,
+                  bottom: 2.0,
+                  child: Container(
+                    height: 15.0,
+                    width: 15.0,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.green
+                    ),
+                  ),
+                ) : Container(),
               ],
             ),
           ),

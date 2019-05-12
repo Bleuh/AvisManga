@@ -12,6 +12,7 @@ class MyApp extends StatelessWidget {
         primarySwatch:themeColor,
         primaryColor:themeColor,
         primaryTextTheme: themeText,
+        textTheme: secondaryThemeText,
         buttonTheme: themeButton
       ),
       routes: routes,
@@ -44,6 +45,10 @@ const TextTheme themeText = const TextTheme(
     color: Colors.white,
     fontSize: 20.0
   )
+);
+
+const TextTheme secondaryThemeText = const TextTheme(
+  title: TextStyle(color: themeColor)
 );
 
 const ButtonThemeData themeButton = const ButtonThemeData(
