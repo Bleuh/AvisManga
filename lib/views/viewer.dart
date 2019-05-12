@@ -6,8 +6,9 @@ import 'package:flutter/material.dart';
 
 class ViewerPage extends StatefulWidget {
   final MangaMetadata manga;
+  final int chapter;
 
-  ViewerPage(this.manga);
+  ViewerPage(this.manga, this.chapter);
 
   @override
   State<StatefulWidget> createState() {
@@ -15,22 +16,23 @@ class ViewerPage extends StatefulWidget {
   }
 }
 
-class ViewerPageState extends State<ViewerPage> {
+class ViewerPageState extends State<ViewerPage>
+    with SingleTickerProviderStateMixin {
   static Future<FileCache> cache = FileCache.fromDefault();
+  double itemWidth;
+
+  Future<Archive> chapter;
 
   @override
   void initState() {
     super.initState();
-  }
 
-  @override
-  Widget build(BuildContext context) {
     var decoder = new ZipDecoder();
     var ref = FirebaseStorage.instance
         .ref()
-        .child(this.widget.manga.chapters.first.key);
+        .child(this.widget.manga.chapters[widget.chapter].key);
     var downloadURL = ref.getDownloadURL();
-    Future<Archive> chapter = downloadURL.then((url) => cache
+    chapter = downloadURL.then((url) => cache
             .then((cache) => cache.getBytes(url).then((bytes) {
                   print(url);
                   return decoder.decodeBytes(bytes);
@@ -38,20 +40,53 @@ class ViewerPageState extends State<ViewerPage> {
             .catchError((err) {
           print(err);
         }));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    itemWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(this.widget.manga.title),
       ),
-      body: FutureBuilder(future: chapter.then((archive) {
-        return archive.first.rawContent;
-      }), builder: (BuildContext ctx, AsyncSnapshot<InputStream> snap) {
-        if (snap.hasData) {
-          print("image loaded");
-          return Image.memory(snap.data.toUint8List());
-        } else {
-          return Container();
-        }
-      }),
+      body: FutureBuilder(
+          future: chapter,
+          builder: (BuildContext ctx, AsyncSnapshot<Archive> snap) {
+            if (snap.hasData) {
+              print("image loaded");
+              return Container(
+                padding: EdgeInsets.all(0),
+                child: PageView.builder(
+                  itemBuilder: (BuildContext context, int index) {
+                    var file = snap.data[index];
+                    return Image.memory(file.rawContent.toUint8List());
+                  },
+                  scrollDirection: Axis.horizontal,
+                ),
+              );
+            } else {
+              return Container(
+                child: Column(
+                  children: <Widget>[
+                    CircularProgressIndicator(),
+                    new Container(
+                      height: 8.0,
+                    ),
+                    Text("loading...")
+                  ],
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                ),
+                alignment: Alignment.center,
+              );
+            }
+          }),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

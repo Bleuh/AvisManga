@@ -31,6 +31,8 @@ class _MangaPageState extends State<MangaPage> {
   double _animatedHeightCommentary = 279.0;
   double _animatedHeightChapters = 279.0;
 
+  int progression = 0;
+
   bool ownManga = false;
 
   @override
@@ -510,7 +512,8 @@ class _MangaPageState extends State<MangaPage> {
             onPressed: () {
               Navigator.of(context).push(new MaterialPageRoute(
                   builder: (BuildContext context) =>
-                      new ViewerPage(this.widget.manga)));
+                      new ViewerPage(this.widget.manga, progression)));
+              progression++;
             },
             child: Column(
               children: <Widget>[
