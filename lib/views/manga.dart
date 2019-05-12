@@ -57,15 +57,17 @@ class _MangaPageState extends State<MangaPage> {
         backgroundColor: Colors.white,
         foregroundColor: Theme.of(context).primaryColor,
         onPressed: () {
-          _asyncInputDialog(context).then((newComment){
-            if(newComment != null) {
-              Auth.instance.then((auth){
-                Database.instance.insertComment(widget.manga, auth.currentUser, newComment).then((comment){
+          _asyncInputDialog(context).then((newComment) {
+            if (newComment != null) {
+              Auth.instance.then((auth) {
+                Database.instance
+                    .insertComment(widget.manga, auth.currentUser, newComment)
+                    .then((comment) {
                   widget.manga.comments.add(comment);
                   auth.currentUser.comments.add(comment);
                   Database.instance.updateUser(auth.currentUser);
-                  widget.manga.comments.sort((Comment a, Comment b){
-                    return - a.score.compareTo(b.score);
+                  widget.manga.comments.sort((Comment a, Comment b) {
+                    return -a.score.compareTo(b.score);
                   });
                   _showSnackBar('Commentaire ajouté !');
                 });
@@ -196,11 +198,11 @@ class _MangaPageState extends State<MangaPage> {
                                   setState(() {
                                     isFav = !isFav;
                                   });
-                                  Auth.db.updateUser(user).then((_){
+                                  Auth.db.updateUser(user).then((_) {
                                     auth.setUser(user);
                                     _showSnackBar(isFav
-                                          ? 'Favorie ajouter'
-                                          : 'Favorie retirer');
+                                        ? 'Favorie ajouter'
+                                        : 'Favorie retirer');
                                   });
                                 });
                               },
@@ -237,23 +239,25 @@ class _MangaPageState extends State<MangaPage> {
               padding: EdgeInsets.all(30.0),
               child: Column(
                 children: <Widget>[
-                  widget.manga.images.where((image) => image != '').isNotEmpty ? Container(
-                    height: 200.0,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: widget.manga.images.map((image){
-                        return Container(
-                          margin: EdgeInsets.only(right: 10.0),
-                          child: CachedNetworkImage(
-                                  imageUrl: image,
-                                  placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                                  errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
-                                  fit: BoxFit.cover
-                          ),
-                        );
-                      }).toList()
-                    ),
-                  ) : Container(),
+                  widget.manga.images.where((image) => image != '').isNotEmpty
+                      ? Container(
+                          height: 200.0,
+                          child: ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: widget.manga.images.map((image) {
+                                return Container(
+                                  margin: EdgeInsets.only(right: 10.0),
+                                  child: CachedNetworkImage(
+                                      imageUrl: image,
+                                      placeholder: (context, url) => Center(
+                                          child: CircularProgressIndicator()),
+                                      errorWidget: (context, url, error) =>
+                                          Center(child: Icon(Icons.error)),
+                                      fit: BoxFit.cover),
+                                );
+                              }).toList()),
+                        )
+                      : Container(),
                   Container(
                     alignment: Alignment.centerLeft,
                     margin: EdgeInsets.only(top: 15.0, bottom: 10.0),
@@ -303,11 +307,11 @@ class _MangaPageState extends State<MangaPage> {
               height: 16.0,
             ),
             Container(
-              padding: EdgeInsets.all(10.0),
-              child: Column(
-                children: <Widget>[
+                padding: EdgeInsets.all(10.0),
+                child: Column(children: <Widget>[
                   Container(
-                    margin: EdgeInsets.only(top: 20.0, bottom: 10.0, left: 20.0),
+                    margin:
+                        EdgeInsets.only(top: 20.0, bottom: 10.0, left: 20.0),
                     alignment: Alignment.center,
                     child: Text(
                       widget.manga.comments.length.toString() + " commentaires",
@@ -319,27 +323,30 @@ class _MangaPageState extends State<MangaPage> {
                     curve: Curves.bounceIn,
                     height: _animatedHeightCommentary,
                     child: Wrap(
-                      children: widget.manga.comments.map((comment) {
-                        return CommentRow(comment, textColor: Colors.white);
-                      }).toList()
-                    ),
+                        children: widget.manga.comments.map((comment) {
+                      return CommentRow(comment, textColor: Colors.white);
+                    }).toList()),
                   ),
                   GestureDetector(
-                    onTap: () => setState((){
-                      _animatedHeightCommentary != null ? _animatedHeightCommentary = null : _animatedHeightCommentary = 279.0;
-                    }),
+                    onTap: () => setState(() {
+                          _animatedHeightCommentary != null
+                              ? _animatedHeightCommentary = null
+                              : _animatedHeightCommentary = 279.0;
+                        }),
                     child: Container(
                       margin: EdgeInsets.all(10.0),
                       alignment: Alignment.center,
-                      child: new Text(_animatedHeightCommentary != null ? "Voir plus de commentaires" : "Voir moins de commentaires", style: TextStyle(color: Colors.white)),
+                      child: new Text(
+                          _animatedHeightCommentary != null
+                              ? "Voir plus de commentaires"
+                              : "Voir moins de commentaires",
+                          style: TextStyle(color: Colors.white)),
                       color: Theme.of(context).primaryColorDark,
                       height: 25.0,
                       width: 200.0,
                     ),
                   ),
-                ]
-              )
-            ),
+                ])),
             Container(
               decoration:
                   BoxDecoration(color: Theme.of(context).primaryColorDark),
@@ -362,17 +369,23 @@ class _MangaPageState extends State<MangaPage> {
                   height: _animatedHeightChapters,
                   child: Wrap(
                       children: widget.manga.chapters
-                          .map((chapter) => Card(child: Text(chapter.url)))
+                          .map((chapter) => Card(child: Text(chapter.key)))
                           .toList()),
                 ),
                 GestureDetector(
-                  onTap: () => setState((){
-                    _animatedHeightChapters != null ? _animatedHeightChapters = null : _animatedHeightChapters = 279.0;
-                  }),
+                  onTap: () => setState(() {
+                        _animatedHeightChapters != null
+                            ? _animatedHeightChapters = null
+                            : _animatedHeightChapters = 279.0;
+                      }),
                   child: Container(
                     margin: EdgeInsets.all(10.0),
                     alignment: Alignment.center,
-                    child: new Text(_animatedHeightChapters != null ? "Voir plus de chapitres" : "Voir moins de chapitres", style: TextStyle(color: Colors.white)),
+                    child: new Text(
+                        _animatedHeightChapters != null
+                            ? "Voir plus de chapitres"
+                            : "Voir moins de chapitres",
+                        style: TextStyle(color: Colors.white)),
                     color: Theme.of(context).primaryColorDark,
                     height: 25.0,
                     width: 200.0,
@@ -386,47 +399,46 @@ class _MangaPageState extends State<MangaPage> {
               height: 16.0,
             ),
             Container(
-              padding: EdgeInsets.all(30.0),
-              child: Column(children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(bottom: 10.0),
-                  alignment: Alignment.center,
-                  child: Text(
-                    "Auteur : ${widget.manga.author.lastName} ${widget.manga.author.firstName}",
-                    style: Theme.of(context).primaryTextTheme.headline,
+                padding: EdgeInsets.all(30.0),
+                child: Column(children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(bottom: 10.0),
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Auteur : ${widget.manga.author.lastName} ${widget.manga.author.firstName}",
+                      style: Theme.of(context).primaryTextTheme.headline,
+                    ),
                   ),
-                ),
-                Container(
-                  height: 150.0,
-                  width: 150.0,
-                  margin: EdgeInsets.all(12.0),
-                  child: Stack(
-                    children: <Widget>[
-                      ConstrainedBox(
-                        constraints: new BoxConstraints.expand(),
-                        child: ClipOval(
-                          child: Image(
-                            image: CachedNetworkImageProvider(widget.manga.author.image),
-                            fit: BoxFit.cover
+                  Container(
+                    height: 150.0,
+                    width: 150.0,
+                    margin: EdgeInsets.all(12.0),
+                    child: Stack(
+                      children: <Widget>[
+                        ConstrainedBox(
+                          constraints: new BoxConstraints.expand(),
+                          child: ClipOval(
+                            child: Image(
+                                image: CachedNetworkImageProvider(
+                                    widget.manga.author.image),
+                                fit: BoxFit.cover),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                Container(
-                  margin: EdgeInsets.all(10.0),
-                  child: Text(
-                    "né le : ${DateFormat('dd/MM/yyyy').format(widget.manga.author.birthDay)} à ${widget.manga.author.birthPlace}",
+                  Container(
+                    margin: EdgeInsets.all(10.0),
+                    child: Text(
+                      "né le : ${DateFormat('dd/MM/yyyy').format(widget.manga.author.birthDay)} à ${widget.manga.author.birthPlace}",
+                      style: Theme.of(context).primaryTextTheme.body1,
+                    ),
+                  ),
+                  Text(
+                    widget.manga.author.biography,
                     style: Theme.of(context).primaryTextTheme.body1,
                   ),
-                ),
-                Text(
-                  widget.manga.author.biography,
-                  style: Theme.of(context).primaryTextTheme.body1,
-                ),
-              ])
-            )
+                ]))
           ]),
           Positioned(
             width: MediaQuery.of(context).size.width,
@@ -493,74 +505,64 @@ class _MangaPageState extends State<MangaPage> {
   }
 
   FlatButton buildRestartButton(BuildContext context) {
-    return this.ownManga ?
-      FlatButton(
-        onPressed: () {
-          Navigator.of(context).push(
-              new MaterialPageRoute(
+    return this.ownManga
+        ? FlatButton(
+            onPressed: () {
+              Navigator.of(context).push(new MaterialPageRoute(
                   builder: (BuildContext context) =>
                       new ViewerPage(this.widget.manga)));
-        },
-        child: Column(
-          children: <Widget>[
-            Icon(Icons.play_arrow,
-                size: 40.0, color: Colors.white),
-            Text(
-              "Reprendre",
-              style: Theme.of(context)
-                  .primaryTextTheme
-                  .button,
-            )
-          ],
-        )
-      )
-      :
-      FlatButton(
-        onPressed: () {
-          _asyncBuyDialog(context).then((bool action){
-            if(action != null && action != false){
-              Auth.instance.then((auth){
-                User user = auth.currentUser;
-                if(user.wallet >= 10){
-                  user.wallet -= 10;
-                  var newOwn = new List<String>.from(user.ownManga);
-                  newOwn.add(widget.manga.id);
-                  user.ownManga = newOwn;
-                  Database.instance.updateUser(user).then((_){
-                    auth.setUser(user);
-                    setState(() {
-                      ownManga = true;
-                    });
-                    _showSnackBar('Manga acheté avec succes !');
+            },
+            child: Column(
+              children: <Widget>[
+                Icon(Icons.play_arrow, size: 40.0, color: Colors.white),
+                Text(
+                  "Reprendre",
+                  style: Theme.of(context).primaryTextTheme.button,
+                )
+              ],
+            ))
+        : FlatButton(
+            onPressed: () {
+              _asyncBuyDialog(context).then((bool action) {
+                if (action != null && action != false) {
+                  Auth.instance.then((auth) {
+                    User user = auth.currentUser;
+                    if (user.wallet >= 10) {
+                      user.wallet -= 10;
+                      var newOwn = new List<String>.from(user.ownManga);
+                      newOwn.add(widget.manga.id);
+                      user.ownManga = newOwn;
+                      Database.instance.updateUser(user).then((_) {
+                        auth.setUser(user);
+                        setState(() {
+                          ownManga = true;
+                        });
+                        _showSnackBar('Manga acheté avec succes !');
+                      });
+                    } else {
+                      _showSnackBar('Vous n\'avez pas assez de ¥');
+                    }
                   });
                 }
-                else{
-                  _showSnackBar('Vous n\'avez pas assez de ¥');
-                }
               });
-            }
-          });
-        },
-        child: Column(
-          children: <Widget>[
-            Icon(Icons.lock,
-                size: 40.0, color: Colors.white),
-            Text(
-              "Acheter (10¥)",
-              style: Theme.of(context)
-                  .primaryTextTheme
-                  .button,
-            )
-          ],
-        )
-      );
+            },
+            child: Column(
+              children: <Widget>[
+                Icon(Icons.lock, size: 40.0, color: Colors.white),
+                Text(
+                  "Acheter (10¥)",
+                  style: Theme.of(context).primaryTextTheme.button,
+                )
+              ],
+            ));
   }
 
   Future<String> _asyncInputDialog(BuildContext context) async {
     String comment = '';
     return showDialog<String>(
       context: context,
-      barrierDismissible: false, // dialog is dismissible with a tap on the barrier
+      barrierDismissible:
+          false, // dialog is dismissible with a tap on the barrier
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('${widget.manga.title}'),
@@ -570,7 +572,8 @@ class _MangaPageState extends State<MangaPage> {
                   child: new TextField(
                 autofocus: true,
                 decoration: new InputDecoration(
-                    labelText: 'Votre commentaire', hintText: 'Manga très intéressant'),
+                    labelText: 'Votre commentaire',
+                    hintText: 'Manga très intéressant'),
                 onChanged: (value) {
                   comment = value;
                 },
@@ -593,7 +596,8 @@ class _MangaPageState extends State<MangaPage> {
   Future<bool> _asyncBuyDialog(BuildContext context) async {
     return showDialog<bool>(
       context: context,
-      barrierDismissible: false, // dialog is dismissible with a tap on the barrier
+      barrierDismissible:
+          false, // dialog is dismissible with a tap on the barrier
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Acheter ${widget.manga.title} d\'une valeur de 10¥ ?'),

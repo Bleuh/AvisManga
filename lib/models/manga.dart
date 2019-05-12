@@ -9,15 +9,15 @@ enum MangaStatus {
 }
 
 class MangaChapter {
-  String url;
+  String key;
 
   MangaChapter.fromMap(Map<String, dynamic> data) {
-    this.url = data["url"];
+    this.key = data["key"];
   }
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> result = new Map();
-    result["url"] = this.url;
+    result["key"] = this.key;
     return result;
   }
 }

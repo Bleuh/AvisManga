@@ -1,6 +1,7 @@
 import 'package:archive/archive.dart';
 import 'package:file_cache/file_cache.dart';
 import 'package:avis_manga/models/manga.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 class ViewerPage extends StatefulWidget {
@@ -25,15 +26,18 @@ class ViewerPageState extends State<ViewerPage> {
   @override
   Widget build(BuildContext context) {
     var decoder = new ZipDecoder();
-    Future<Archive> chapter = cache
-        .then((cache) =>
-            cache.load(this.widget.manga.chapters.first.url).then((entry) {
-              print(this.widget.manga.chapters.first.url);
-              return decoder.decodeBytes(entry.bytes);
-            }))
-        .catchError((err) {
-      print(err);
-    });
+    var ref = FirebaseStorage.instance
+        .ref()
+        .child(this.widget.manga.chapters.first.key);
+    var downloadURL = ref.getDownloadURL();
+    Future<Archive> chapter = downloadURL.then((url) => cache
+            .then((cache) => cache.getBytes(url).then((bytes) {
+                  print(url);
+                  return decoder.decodeBytes(bytes);
+                }))
+            .catchError((err) {
+          print(err);
+        }));
     return Scaffold(
       appBar: AppBar(
         title: Text(this.widget.manga.title),
