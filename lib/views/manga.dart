@@ -371,7 +371,21 @@ class _MangaPageState extends State<MangaPage> {
                   height: _animatedHeightChapters,
                   child: Wrap(
                       children: widget.manga.chapters
-                          .map((chapter) => Card(child: Text(chapter.key)))
+                          .map((chapter) => FlatButton(
+                                child: Text(
+                                  chapter.key,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                      new MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              new ViewerPage(this.widget.manga,
+                                                  chapter.number - 1)));
+                                },
+                              ))
                           .toList()),
                 ),
                 GestureDetector(

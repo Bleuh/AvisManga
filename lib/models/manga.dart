@@ -10,14 +10,17 @@ enum MangaStatus {
 
 class MangaChapter {
   String key;
+  int number;
 
   MangaChapter.fromMap(Map<String, dynamic> data) {
     this.key = data["key"];
+    this.number = data["number"];
   }
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> result = new Map();
     result["key"] = this.key;
+    result["number"] = this.number;
     return result;
   }
 }
