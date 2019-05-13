@@ -22,10 +22,10 @@ class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   List<Widget> _children;
 
-  PopupMenuButton<String> popupmenuHome;
-  PopupMenuButton<String> popupmenuFav;
+  List<Widget> popupmenuHome;
+  List<Widget> popupmenuFav;
 
-  PopupMenuButton<String> popupmenu;
+  List<Widget> popupmenu;
 
   bool friendFilter = false;
   bool display = false;
@@ -38,50 +38,39 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    popupmenuHome = PopupMenuButton<String>(
-      itemBuilder: (BuildContext context) {
-        return [
-          new PopupMenuItem<String> (
-            value: 'friend_only',
-            child: new SwitchListTile(
-              value: friendFilter,
-              onChanged: (value) => setState((){friendFilter = value;}),
-              title: new Text('View only friends'),
-            )
-          ),
-        ];
-      },
-    );
+    popupmenuHome = <Widget>[];
+    // popupmenuHome = PopupMenuButton<String>(
+    //   itemBuilder: (BuildContext context) {
+    //     return [
+    //       new PopupMenuItem<String> (
+    //         value: 'friend_only',
+    //         child: new SwitchListTile(
+    //           value: friendFilter,
+    //           onChanged: (value) => setState((){friendFilter = value;}),
+    //           title: new Text('View only friends'),
+    //         )
+    //       ),
+    //     ];
+    //   },
+    // );
 
-    popupmenuFav = PopupMenuButton<String>(
-      itemBuilder: (BuildContext context) {
-        return [
-          new PopupMenuItem<String> (
-            value: 'display',
-            child: new CheckboxListTile(
-                value: display,
-                onChanged: (value) {
-                  Favorites fav = _children[1];
-                  _children.insert(1, Favorites(fav.mangas, value));
-                  setState((){
-                    _children = _children;
-                    display = value;
-                  });
-                },
-                title: new Text('Display per 3'),
-            )
-          )
-        ];
-      },
-    );
+    popupmenuFav = <Widget>[
+      IconButton(
+        icon: Icon(Icons.photo_size_select_large),
+        onPressed: () {
+          Favorites fav = _children[1];
+          _children.insert(1, Favorites(fav.mangas, !display));
+          setState((){
+            _children = _children;
+            display = !display;
+          });
+        },
+      ),
+    ];
 
     popupmenu = popupmenuHome;
 
-    _children = [
-      Feed(this.widget.data),
-      Favorites([], display),
-      FriendsList([]) // waiting other page
-    ];
+    _children = [];
   }
 
   _HomePageState() {
@@ -90,7 +79,11 @@ class _HomePageState extends State<HomePage> {
       auth.subscribe(_listener);
       setState(() {
         user = auth.currentUser;
-        _children[2] = FriendsList(auth.currentUser.friends);
+        _children = [
+          Feed(this.widget.data, auth.currentUser),
+          Favorites([], display),
+          FriendsList(auth.currentUser.friends) // waiting other page
+        ];
       });
     });
   }
@@ -101,7 +94,7 @@ class _HomePageState extends State<HomePage> {
       switch (index) {
         case 0:
           Database.instance.listMangas().then((List<MangaMetadata>data) {
-            _children.insert(0, Feed(data));
+            _children.insert(0, Feed(data, this.user));
             setState(() {
               _children = _children;
             });
@@ -121,7 +114,7 @@ class _HomePageState extends State<HomePage> {
           setState(() {
             _children[2] = FriendsList(user.friends);
           });
-         popupmenu = null;
+         popupmenu = <Widget>[];
       }
     });
   }
@@ -133,10 +126,10 @@ class _HomePageState extends State<HomePage> {
       child: new Scaffold(
         appBar: new AppBar(
           title: new Text(widget.title),
-          actions: popupmenu != null ? <Widget>[popupmenu] : <Widget>[],
+          actions: popupmenu,
         ),
         drawer: HomeDrawer(this.user),
-        body: _children[_currentIndex],
+        body: _children.isNotEmpty ? _children[_currentIndex] : Container(),
         bottomNavigationBar: BottomNavigationBar(
           onTap: onTabTapped,
           currentIndex: _currentIndex,

@@ -1,6 +1,8 @@
 import 'package:archive/archive.dart';
 import 'package:file_cache/file_cache.dart';
 import 'package:avis_manga/models/manga.dart';
+import 'package:avis_manga/data/db.dart';
+import 'package:avis_manga/auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -66,7 +68,10 @@ class ViewerPageState extends State<ViewerPage>
         setState(() {
           currentlyDisplay = true;
         });
-        return Future.value(true);
+        return Auth.instance.then((auth){
+          auth.currentUser.lastTimeRead = DateTime.now();
+          return Database.instance.updateUser(auth.currentUser).then((_) => Future.value(true));
+        });
       },
       child: Scaffold(
         appBar: currentlyDisplay ? AppBar(

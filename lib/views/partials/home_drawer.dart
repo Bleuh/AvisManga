@@ -40,18 +40,45 @@ class HomeDrawer extends StatelessWidget {
                   ],
                 ),
                 Container(
-                  height:  MediaQuery.of(context).size.height,
+                  height:  MediaQuery.of(context).size.height - 249.0,
+                  padding: EdgeInsets.only(bottom: 10.0),
                   decoration: BoxDecoration(
                     color: Color(0xFFFAFAFA)
                   ),
                   child: ListView(
                     children: <Widget>[
-                      new ListTile(
-                        title: new Text('data'),
+                      ListTile(
+                        title: Text('Configuration', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
                       ),
-                      new Divider(),
-                      new ListTile(
-                        title: new Text('data'),
+                      Divider(color: Theme.of(context).primaryColorLight, indent: 4.0),
+                      ListTile(
+                        title: new Text('Modifier mon compte'),
+                        onTap: () {
+                          Navigator.push(context,
+                            new MaterialPageRoute(
+                              builder: (BuildContext context) => new EditPage(user: this.user)
+                            )
+                          );
+                        }
+                      ),
+                      ListTile(
+                        title: new Text('Changer de langage'),
+                      ),
+                      ListTile(
+                        title: new Text('Customiser mon thème'),
+                      ),
+                      ListTile(
+                        title: new Text('Assitance', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
+                      ),
+                      Divider(color: Theme.of(context).primaryColorLight, indent: 4.0),
+                      ListTile(
+                        title: new Text('Nous contacter'),
+                      ),
+                      ListTile(
+                        title: new Text('Recherche de mise à jour'),
+                      ),
+                      ListTile(
+                        title: new Text('A propos'),
                       ),
                     ],
                   ),
@@ -61,7 +88,7 @@ class HomeDrawer extends StatelessWidget {
             Positioned(
               child: Container(
                 child: new ListTile(
-                  title: new Text('Logout from AvisManga', style: TextStyle(color: Colors.white)),
+                  title: new Text('Se deconnecter d\'AvisManga', style: TextStyle(color: Colors.white)),
                   onTap: () => Auth.instance.then((a) => a.doLogout()),
                   trailing:  Icon(Icons.exit_to_app, color: Colors.white,),
                   contentPadding: EdgeInsets.only(top: 5.0, bottom: 5.0, left: 20.0, right: 20.0),

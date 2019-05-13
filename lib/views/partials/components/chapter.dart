@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:avis_manga/models/manga.dart';
 import 'package:avis_manga/views/viewer.dart';
+import 'package:avis_manga/data/db.dart';
+import 'package:avis_manga/auth.dart';
 
 class Chapter extends StatelessWidget {
   final MangaMetadata manga;
@@ -19,11 +21,17 @@ class Chapter extends StatelessWidget {
         ),
       ),
       onPressed: () {
-        Navigator.of(context).push(
-            new MaterialPageRoute(
-                builder: (BuildContext context) =>
-                    new ViewerPage(manga,
-                        chapter.number - 1)));
+        Auth.instance.then((auth){
+          auth.currentUser.lastMangaRead = this.manga.title;
+          auth.currentUser.lastTimeRead = null;
+          Database.instance.updateUser(auth.currentUser).then((_){
+            Navigator.of(context).push(
+                new MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        new ViewerPage(manga,
+                            chapter.number - 1)));
+          });
+        });
       },
     );
   }

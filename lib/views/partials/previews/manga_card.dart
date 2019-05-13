@@ -13,6 +13,7 @@ class MangaCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      margin: EdgeInsets.all(0.0),
       child: Column(
         children: <Widget>[
           GestureDetector(
@@ -45,7 +46,7 @@ class MangaCard extends StatelessWidget {
                         ),
                         Container(
                           child: Text(
-                            this.meta.nbChap.toString() + " chapitres",
+                            "${this.meta.nbChap.toString()} chapitres - ${this.meta.statusString()}",
                             textAlign: TextAlign.left,
                           ),
                           padding: EdgeInsets.only(left: 5.0, bottom: 5.0),
@@ -79,7 +80,7 @@ class MangaCard extends StatelessWidget {
                               textAlign: TextAlign.left,
                               overflow: TextOverflow.fade,
                               softWrap: true,
-                              maxLines: 3,
+                              maxLines: 5,
                             ),
                             padding: EdgeInsets.all(10.0),
                           ),
@@ -129,7 +130,6 @@ class MangaCard extends StatelessWidget {
         ],
         mainAxisAlignment: MainAxisAlignment.start,
       ),
-      margin: EdgeInsets.all(10.0),
     );
   }
 }

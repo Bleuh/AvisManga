@@ -10,7 +10,7 @@ class Favorites extends StatelessWidget {
 
   List<FavoriteCard> buildFavoritesCard() {
     return this.mangas.map((manga) {
-      return FavoriteCard(manga);
+      return FavoriteCard(manga, small: display);
     }).toList();
   }
 
@@ -19,7 +19,7 @@ class Favorites extends StatelessWidget {
     return GridView.count(
       padding: EdgeInsets.all(10.0),
       children: buildFavoritesCard(),
-      childAspectRatio: 10/15,
+      childAspectRatio: 8/15,
       crossAxisCount: display ? 3 : 2,
       mainAxisSpacing: 10.0,
       crossAxisSpacing: 10.0,

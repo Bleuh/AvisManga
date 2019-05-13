@@ -64,7 +64,7 @@ class _LoginState extends State<LoginPage> {
           children: <Widget>[
             new Expanded(
               child: Text(
-                "SIGN UP",
+                "S\'INSCRIRE",
                 textAlign: TextAlign.center,
                 style:
                     TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
@@ -92,7 +92,7 @@ class _LoginState extends State<LoginPage> {
           children: <Widget>[
             new Expanded(
               child: Text(
-                "LOGIN",
+                "SE CONNECTER",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Theme.of(context).primaryColor,
@@ -214,7 +214,7 @@ class _LoginState extends State<LoginPage> {
               controller: _emailController,
               validator: (val) {
                 return val.length < 10
-                    ? "Username must have atleast 10 chars"
+                    ? "Le nom d'utilisateur doit avoir au moins 10 caractères"
                     : null;
               },
               textAlign: TextAlign.left,
@@ -287,7 +287,7 @@ class _LoginState extends State<LoginPage> {
             child: TextFormField(
               validator: (input) {
                 return (input != _passwordController.text)
-                    ? "passwords are different"
+                    ? "les mots de passe sont différents"
                     : null;
               },
               obscureText: true,
@@ -436,7 +436,7 @@ class _LoginState extends State<LoginPage> {
             Divider(
               height: 24.0,
             ),
-            buildTextRow("PASSWORD"),
+            buildTextRow("MOT DE PASSE"),
             buildPasswordInput(),
             Divider(
               height: 24.0,
@@ -448,7 +448,7 @@ class _LoginState extends State<LoginPage> {
                   padding: const EdgeInsets.only(right: 20.0),
                   child: new FlatButton(
                     child: new Text(
-                      "Forgot Password?",
+                      "Mot de passe oublié?",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).primaryColor,
@@ -461,7 +461,7 @@ class _LoginState extends State<LoginPage> {
                 ),
               ],
             ),
-            buildConfirmButton("LOGIN", () {
+            buildConfirmButton("CONNECTION", () {
               if (loginFormKey.currentState.validate()) {
                 Auth.instance.then((auth) {
                   auth.doLogin(
@@ -485,7 +485,7 @@ class _LoginState extends State<LoginPage> {
                     ),
                   ),
                   Text(
-                    "OR CONNECT WITH",
+                    "OU SE CONNECTER AVEC",
                     style: TextStyle(
                       color: Colors.grey,
                       fontWeight: FontWeight.bold,
@@ -563,12 +563,12 @@ class _LoginState extends State<LoginPage> {
             Divider(
               height: 24.0,
             ),
-            buildTextRow("PASSWORD"),
+            buildTextRow("MOT DE PASSE"),
             buildPasswordInput(),
             Divider(
               height: 24.0,
             ),
-            buildTextRow("CONFIRM PASSWORD"),
+            buildTextRow("CONFIRMER MOT DE PASSE"),
             buildConfirmPasswordInput(),
             Divider(
               height: 24.0,
@@ -580,7 +580,7 @@ class _LoginState extends State<LoginPage> {
                   padding: const EdgeInsets.only(right: 20.0),
                   child: new FlatButton(
                     child: new Text(
-                      "Already have an account ?",
+                      "Vous avez déjà un compte ?",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).primaryColor,
@@ -589,17 +589,15 @@ class _LoginState extends State<LoginPage> {
                       textAlign: TextAlign.end,
                     ),
                     onPressed: () async {
-                      print("Pressed");
                       await _controller.animateToPage(0,
                           duration: const Duration(milliseconds: 500),
                           curve: Curves.ease);
-                      print("Scrolled");
                     },
                   ),
                 ),
               ],
             ),
-            buildConfirmButton("SIGN UP", () {
+            buildConfirmButton("S'INSCRIRE", () {
               if (signupFormKey.currentState.validate()) {
                 Auth.instance.then((auth) {
                   auth.doSignUp(
